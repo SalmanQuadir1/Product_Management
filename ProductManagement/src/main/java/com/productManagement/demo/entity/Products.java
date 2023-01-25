@@ -14,8 +14,15 @@ public class Products {
 	private String product_name;
 	private String product_description;
 	private Double product_price;
+	private String status;
 	
 	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	public Long getProduct_id() {
 		return product_id;
 	}
