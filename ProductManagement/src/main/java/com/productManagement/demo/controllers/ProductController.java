@@ -15,6 +15,6 @@ public class ProductController {
 	public ResponseEntity<?> saveProduct(@RequestBody Products product) {
         
 		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 }
