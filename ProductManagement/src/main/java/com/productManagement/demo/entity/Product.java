@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Products {
+public class Product {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,12 +18,11 @@ public class Products {
 	
 	
 	
-	public Products() {
-		super();
+	public Product() {
+		
 	}
 	
-	public Products(Long id, String name, String description, Double price, String status) {
-		super();
+	public Product(Long id, String name, String description, Double price, String status) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
