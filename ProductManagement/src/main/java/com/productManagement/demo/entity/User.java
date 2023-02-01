@@ -43,7 +43,7 @@ public class User {
 	private String location;
 	
 	@Column(name = "country")
-	private String country;
+	private String country;   
 
 	
 	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH},fetch=FetchType.EAGER)
