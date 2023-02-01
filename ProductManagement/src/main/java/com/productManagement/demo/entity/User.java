@@ -43,6 +43,7 @@ public class User {
 	private String location;
 	          
 	@Column(name = "country")
+	
 	private String country;   
 
 	
