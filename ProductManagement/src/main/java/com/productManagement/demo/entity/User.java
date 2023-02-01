@@ -42,7 +42,7 @@ public class User {
 	@Column(name = "location")
 	private String location;
 	          
-	@Column(name = "country")
+	@Column(name = "country")   
 	
 	private String country;   
 
