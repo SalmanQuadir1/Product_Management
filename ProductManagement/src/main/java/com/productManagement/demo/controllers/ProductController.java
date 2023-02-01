@@ -10,22 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.productManagement.demo.entity.Product;
-<<<<<<< HEAD
-=======
 import com.productManagement.demo.service.ProductService;
->>>>>>> branch 'main' of https://github.com/SalmanQuadir1/Product_Management.git
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController 
 @RequestMapping("/product")
 public class ProductController {
 	
-<<<<<<< HEAD
-	@PostMapping
-	public ResponseEntity<?> saveProduct(@RequestBody Product product) {
-    
-		return ResponseEntity.status(HttpStatus.CREATED).body(null);
-=======
 	@Autowired
 	 ProductService prodService;
 	
@@ -42,6 +33,5 @@ public class ProductController {
 
 		} 
 	
->>>>>>> branch 'main' of https://github.com/SalmanQuadir1/Product_Management.git
 	}
 }

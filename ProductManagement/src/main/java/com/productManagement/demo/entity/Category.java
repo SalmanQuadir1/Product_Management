@@ -17,8 +17,9 @@ public class Category {
 
     private String name;
 
-    @OneToMany(mappedBy = "category")
-    private List<Product> product;
+	/*
+	 * @OneToMany(mappedBy = "category") private List<Product> product;
+	 */
 
 	public Long getId() {
 		return id;
@@ -36,14 +37,11 @@ public class Category {
 		this.name = name;
 	}
 
-	public List<Product> getProduct() {
-		return product;
-	}
-
-	public void setProduct(List<Product> product) {
-		this.product = product;
-	}
-    
+	/*
+	 * public List<Product> getProduct() { return product; }
+	 * 
+	 * public void setProduct(List<Product> product) { this.product = product; }
+	 */
     
 
 }
