@@ -1,12 +1,17 @@
 package com.productManagement.demo.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
-public class Products {
+public class Product {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,14 +21,18 @@ public class Products {
 	private Double price;
 	private String status;
 	
+	@ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 	
 	
-	public Products() {
-		super();
+	
+	public Product() {
+		
 	}
 	
-	public Products(Long id, String name, String description, Double price, String status) {
-		super();
+	public Product(Long id, String name, String description, Double price, String status) {
+		
 		this.id = id;
 		this.name = name;
 		this.description = description;
