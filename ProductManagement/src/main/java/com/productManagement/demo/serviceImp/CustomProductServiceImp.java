@@ -11,7 +11,7 @@ import com.productManagement.demo.service.ProductService;
 public class CustomProductServiceImp implements ProductService {
 
 	@Autowired
-	 ProductRepository productRepo;
+	 private ProductRepository productRepo;
 	
 	@Override
 	public boolean save(Product product) {

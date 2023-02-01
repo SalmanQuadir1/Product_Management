@@ -21,10 +21,6 @@ public class Product {
 	private Double price;
 	private String status;
 	
-	@ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-	
 	
 	
 	public Product() {
@@ -32,7 +28,6 @@ public class Product {
 	}
 	
 	public Product(Long id, String name, String description, Double price, String status) {
-		
 		this.id = id;
 		this.name = name;
 		this.description = description;
