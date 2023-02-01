@@ -17,11 +17,11 @@ public class ShoppingCart {
 	@OneToOne
 	private User user;
 	
-	@OneToOne
-	private Order order;
-	
-	@OneToMany
-	private Category category;
+//	@OneToOne
+//	private Order order;
+//	
+//	@OneToMany
+//	private Category category;
 	
 	private String quantity;
 	

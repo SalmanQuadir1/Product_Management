@@ -30,8 +30,21 @@ public class User {
 	@Column(name = "password")
 	private String password;
 	
-	@Column(name = "number")
-	private Long number;
+	@Column(name = "phone_number")
+	private Long phoneNumber;
+	
+	@Column(name = "address")
+	private String address;
+	
+	@Column(name = "pincode")
+	private String pincode;
+	
+	@Column(name = "location")
+	private String location;
+	
+	@Column(name = "country")
+	private String country;
+
 	
 	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH},fetch=FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -74,12 +87,46 @@ public class User {
 	}
 
    
-	public Long getNumber() {
-		return number;
+
+
+	public Long getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public void setNumber(Long number) {
-		this.number = number;
+	public void setPhoneNumber(Long phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(String pincode) {
+		this.pincode = pincode;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	public List<Role> getRoles() {
