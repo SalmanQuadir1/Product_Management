@@ -1,12 +1,19 @@
 package com.productManagement.demo.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="category")
 public class Category {
 
 	@Id
@@ -21,6 +28,10 @@ public class Category {
 
 	@Column(name = "active")
 	private boolean active;
+	
+	
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Product> product;
 
 	public Category() {
 	}
@@ -55,6 +66,16 @@ public class Category {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+	
+	
+
+	public List<Product> getProduct() {
+		return product;
+	}
+
+	public void setProduct(List<Product> product) {
+		this.product = product;
 	}
 
 	public Category(Long id, String categoryName, String description, boolean active) {

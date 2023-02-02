@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Product {
@@ -39,6 +41,14 @@ public class Product {
 	
 	@Column(name="product_image")
 	private String productImage;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+	
+	@ManyToOne
+	@JoinColumn(name = "category_id")
+	private Category category;
 	
 	
 	
@@ -173,8 +183,36 @@ public class Product {
 
 
 
+	public User getUser() {
+		return user;
+	}
+
+
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+
+
+	public Category getCategory() {
+		return category;
+	}
+
+
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+
+
+	
+
+
+
 	public Product(Long id, String productName, String description, Double price, String status, String comments,
-			String reviews, String rating, String details, String productImage) {
+			String reviews, String rating, String details, String productImage, User user, Category category) {
 		super();
 		this.id = id;
 		this.productName = productName;
@@ -186,6 +224,8 @@ public class Product {
 		this.rating = rating;
 		this.details = details;
 		this.productImage = productImage;
+		this.user = user;
+		this.category = category;
 	}
 
 

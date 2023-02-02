@@ -46,6 +46,8 @@ public class UserController {
 			userEntity.setPopularSearches(user.getPopularSearches());
 			userEntity.setRecentSearches(user.getRecentSearches());
 			userEntity.setRoles(user.getRoles());
+			userEntity.setProduct(user.getProduct());
+			
 			User result = userService.saveProduct(userEntity);
 			return ResponseEntity.status(HttpStatus.OK).body(result);
 		} else if (user != null && user.getId() == null) {
@@ -63,6 +65,7 @@ public class UserController {
 			userEntity.setPopularSearches(user.getPopularSearches());
 			userEntity.setRecentSearches(user.getRecentSearches());
 			userEntity.setRoles(user.getRoles());
+			userEntity.setProduct(user.getProduct());
 			User newUser = userService.saveProduct(userEntity);
 
 			return ResponseEntity.status(HttpStatus.OK).body(newUser);

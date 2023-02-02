@@ -8,7 +8,7 @@ public class ProductManagementApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProductManagementApplication.class, args);
-		System.out.println("Product ..");
+		System.out.println("Localhost:8087");
 	}
 
 }
