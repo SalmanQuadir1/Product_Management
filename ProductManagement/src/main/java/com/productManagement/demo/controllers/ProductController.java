@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.productManagement.demo.entity.Product;
-import com.productManagement.demo.entity.User;
 import com.productManagement.demo.service.ProductService;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -30,51 +28,52 @@ public class ProductController {
 	@Autowired
 	ProductService prodService;
 
-	@PostMapping("/saveProduct")
-	public ResponseEntity<?> saveProduct(@RequestBody Product product) {
-		System.out.println("Product Saved !!!");
-		try {
-			prodService.save(product);
-			return ResponseEntity.status(HttpStatus.CREATED).body(product);
-
-		} catch (Exception e) {
-
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-
-		}
-
-	}
+	/*
+	 * @PostMapping("/saveProduct") public ResponseEntity<?>
+	 * saveProduct(@RequestBody Product product) {
+	 * System.out.println("Product Saved !!!"); try { prodService.save(product);
+	 * return ResponseEntity.status(HttpStatus.CREATED).body(product);
+	 * 
+	 * } catch (Exception e) {
+	 * 
+	 * return
+	 * ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 
 
 	@PostMapping("/updateProduct")
-	public ResponseEntity updateProduct(HttpServletRequest request, HttpServletResponse response,
+	public ResponseEntity<?> updateProduct(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Product product) {
 		if (product != null && product.getId() != null) {
 			Product productEntity = prodService.getProductById(product.getId());
-			productEntity.setDescription(productEntity.getDescription());
-			productEntity.setComments(productEntity.getComments());
-			productEntity.setDetails(productEntity.getDetails());
-			productEntity.setPrice(productEntity.getPrice());
-			productEntity.setRating(productEntity.getRating());
-			productEntity.setReviews(productEntity.getReviews());
-			productEntity.setStatus(productEntity.getStatus());
-			productEntity.setProductName(productEntity.getProductName());
+			product.setId(productEntity.getId());
+			productEntity.setDescription(product.getDescription());
+			productEntity.setComments(product.getComments());
+			productEntity.setDetails(product.getDetails());
+			productEntity.setPrice(product.getPrice());
+			productEntity.setRating(product.getRating());
+			productEntity.setReviews(product.getReviews());
+			productEntity.setStatus(product.getStatus());
+			productEntity.setProductName(product.getProductName());
 			Product result = prodService.saveProduct(productEntity);
 			return ResponseEntity.status(HttpStatus.OK).body(result);
 		} else if (product != null && product.getId() == null) {
 			Product productEntity = new Product();
-			productEntity.setDescription(productEntity.getDescription());
-			productEntity.setComments(productEntity.getComments());
-			productEntity.setDetails(productEntity.getDetails());
-			productEntity.setPrice(productEntity.getPrice());
-			productEntity.setRating(productEntity.getRating());
-			productEntity.setReviews(productEntity.getReviews());
-			productEntity.setStatus(productEntity.getStatus());
-			productEntity.setProductName(productEntity.getProductName());
+			productEntity.setDescription(product.getDescription());
+			productEntity.setComments(product.getComments());
+			productEntity.setDetails(product.getDetails());
+			productEntity.setPrice(product.getPrice());
+			productEntity.setRating(product.getRating());
+			productEntity.setReviews(product.getReviews());
+			productEntity.setStatus(product.getStatus());
+			productEntity.setProductName(product.getProductName());
 
 			Product newProduct = prodService.saveProduct(productEntity);
 
-			// add product items
 			return ResponseEntity.status(HttpStatus.OK).body(newProduct);
 
 		} else {
@@ -82,7 +81,7 @@ public class ProductController {
 		}
 	}
 	
-	@GetMapping("/all")
+	@GetMapping("/allProducts")
 	public ResponseEntity<?> getAll() {
 		List<Product> product = prodService.findAll();
 		return ResponseEntity.ok(product);

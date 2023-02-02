@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.productManagement.demo.entity.Order;
+import com.productManagement.demo.entity.Product;
 import com.productManagement.demo.entity.User;
 import com.productManagement.demo.service.UserService;
 
@@ -25,9 +26,52 @@ import com.productManagement.demo.service.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
-	
-	
-	
+
+	@PostMapping("/updateUser")
+	public ResponseEntity<?> updateUser(@RequestBody User user, HttpServletRequest request,
+			HttpServletResponse response) {
+		if (user != null && user.getId() != null) {
+			User userEntity = userService.getUserById(user.getId());
+			userEntity.setId(user.getId());
+			userEntity.setFirstName(user.getFirstName());
+			userEntity.setLastName(user.getLastName());
+			userEntity.setActive(user.getActive());
+			userEntity.setAddress(user.getAddress());
+			userEntity.setCountry(user.getCountry());
+			userEntity.setEmail(user.getEmail());
+			userEntity.setLocation(user.getLocation());
+			userEntity.setPassword(user.getPassword());
+			userEntity.setPhone(user.getPhone());
+			userEntity.setPincode(user.getPincode());
+			userEntity.setPopularSearches(user.getPopularSearches());
+			userEntity.setRecentSearches(user.getRecentSearches());
+			userEntity.setRoles(user.getRoles());
+			User result = userService.saveProduct(userEntity);
+			return ResponseEntity.status(HttpStatus.OK).body(result);
+		} else if (user != null && user.getId() == null) {
+			User userEntity = new User();
+			userEntity.setFirstName(user.getFirstName());
+			userEntity.setLastName(user.getLastName());
+			userEntity.setActive(user.getActive());
+			userEntity.setAddress(user.getAddress());
+			userEntity.setCountry(user.getCountry());
+			userEntity.setEmail(user.getEmail());
+			userEntity.setLocation(user.getLocation());
+			userEntity.setPassword(user.getPassword());
+			userEntity.setPhone(user.getPhone());
+			userEntity.setPincode(user.getPincode());
+			userEntity.setPopularSearches(user.getPopularSearches());
+			userEntity.setRecentSearches(user.getRecentSearches());
+			userEntity.setRoles(user.getRoles());
+			User newUser = userService.saveProduct(userEntity);
+
+			return ResponseEntity.status(HttpStatus.OK).body(newUser);
+
+		} else {
+			return ResponseEntity.badRequest().body("User Details Are missing");
+		}
+	}
+
 	@PostMapping("/saveUser")
 	public ResponseEntity checkOutOrders(@RequestBody User user, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -41,26 +85,27 @@ public class UserController {
 		return ResponseEntity.ok(user);
 	}
 
-	@GetMapping("/all/{id}")
+	@GetMapping("/findUser/{id}")
 	public ResponseEntity<?> getById(@PathVariable("id") Long id) {
 		Optional<User> user = userService.findById(id);
 		return ResponseEntity.ok(user);
 	}
-	
+
 	@GetMapping("/distinctPhone/{phone}")
-	public ResponseEntity distinctPhone(HttpServletRequest request,HttpServletResponse response,
+	public ResponseEntity distinctPhone(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable String phone) {
 		List<User> users = userService.findDistinctByPhone(phone);
-		if(users != null && users.size() != 0) {
+		if (users != null && users.size() != 0) {
 			return ResponseEntity.status(HttpStatus.OK).body(true);
-		}else {
+		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(false);
 		}
 	}
-	
+
 	@GetMapping("/getUserDetails/{username}")
-	public ResponseEntity getUserDetails(@PathVariable String username,HttpServletRequest request,HttpServletResponse response) {
-		User user = userService.getUserDetails(username);
+	public ResponseEntity getUserDetails(@PathVariable String username, HttpServletRequest request,
+			HttpServletResponse response) {
+		List<User> user = userService.getUserDetails(username);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
 	}
 

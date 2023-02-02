@@ -27,4 +27,16 @@ public class CategoryServiceImpl implements CategoryService {
 
 	}
 
+	@Override
+	public Category getCategoryById(Long id) {
+		// TODO Auto-generated method stub
+		return csRepo.findById(id).get();
+	}
+
+	@Override
+	public Category saveCategory(Category category) {
+		// TODO Auto-generated method stub
+		return csRepo.save(category);
+	}
+
 }

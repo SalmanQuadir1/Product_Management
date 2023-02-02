@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.productManagement.demo.entity.Order;
+import com.productManagement.demo.entity.Product;
 import com.productManagement.demo.entity.User;
 import com.productManagement.demo.repository.UserRepository;
 import com.productManagement.demo.service.UserService;
@@ -39,9 +40,9 @@ public class UserServiceImpl implements  UserService {
 
 
 	@Override
-	public User getUserDetails(String username) {
+	public List<User> getUserDetails(String username) {
 		// TODO Auto-generated method stub
-		return userRepoitory.findByUsername(username);
+		return (List<User>) userRepoitory.findByUsername(username);
 	}
 
 
@@ -49,6 +50,20 @@ public class UserServiceImpl implements  UserService {
 	public User save(User user) {
 		
 		return userRepoitory.save(user);
+	}
+
+
+	@Override
+	public User getUserById(Long id) {
+		// TODO Auto-generated method stub
+		return userRepoitory.findById(id).get();
+	}
+
+
+	@Override
+	public User saveProduct(User userEntity) {
+		// TODO Auto-generated method stub
+		return userRepoitory.save(userEntity);
 	}
 
 }

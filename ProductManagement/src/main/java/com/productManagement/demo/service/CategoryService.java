@@ -8,4 +8,8 @@ import com.productManagement.demo.entity.Category;
 public interface CategoryService {
 
 	boolean save(Category category);
+
+	Category getCategoryById(Long id);
+
+	Category saveCategory(Category category);
 }
