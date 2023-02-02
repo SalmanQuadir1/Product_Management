@@ -37,6 +37,9 @@ public class Product {
 	@Column(name="details")
 	private String details;
 	
+	@Column(name="product_image")
+	private String productImage;
+	
 	
 	
 	public Product() {
@@ -150,11 +153,28 @@ public class Product {
 	public void setDetails(String details) {
 		this.details = details;
 	}
+	
+
+
+
+	public String getProductImage() {
+		return productImage;
+	}
+
+
+
+	public void setProductImage(String productImage) {
+		this.productImage = productImage;
+	}
+
+
+
+
 
 
 
 	public Product(Long id, String productName, String description, Double price, String status, String comments,
-			String reviews, String rating, String details) {
+			String reviews, String rating, String details, String productImage) {
 		super();
 		this.id = id;
 		this.productName = productName;
@@ -165,6 +185,7 @@ public class Product {
 		this.reviews = reviews;
 		this.rating = rating;
 		this.details = details;
+		this.productImage = productImage;
 	}
 
 

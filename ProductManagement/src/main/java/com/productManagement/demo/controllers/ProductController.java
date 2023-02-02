@@ -52,14 +52,25 @@ public class ProductController {
 		if (product != null && product.getId() != null) {
 			Product productEntity = prodService.getProductById(product.getId());
 			productEntity.setDescription(productEntity.getDescription());
+			productEntity.setComments(productEntity.getComments());
+			productEntity.setDetails(productEntity.getDetails());
+			productEntity.setPrice(productEntity.getPrice());
+			productEntity.setRating(productEntity.getRating());
+			productEntity.setReviews(productEntity.getReviews());
+			productEntity.setStatus(productEntity.getStatus());
+			productEntity.setProductName(productEntity.getProductName());
 			Product result = prodService.saveProduct(productEntity);
 			return ResponseEntity.status(HttpStatus.OK).body(result);
 		} else if (product != null && product.getId() == null) {
 			Product productEntity = new Product();
-			productEntity.setProductName(product.getProductName());
-			productEntity.setId(product.getId());
-			productEntity.setDescription(product.getDescription());
-			productEntity.setPrice(product.getPrice());
+			productEntity.setDescription(productEntity.getDescription());
+			productEntity.setComments(productEntity.getComments());
+			productEntity.setDetails(productEntity.getDetails());
+			productEntity.setPrice(productEntity.getPrice());
+			productEntity.setRating(productEntity.getRating());
+			productEntity.setReviews(productEntity.getReviews());
+			productEntity.setStatus(productEntity.getStatus());
+			productEntity.setProductName(productEntity.getProductName());
 
 			Product newProduct = prodService.saveProduct(productEntity);
 

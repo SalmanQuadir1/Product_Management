@@ -36,7 +36,7 @@ public class User {
 	private String password;
 	
 	@Column(name = "phone_number")
-	private Long phone;
+	private String phone;
 	
 	@Column(name = "address")
 	private String address;
@@ -58,6 +58,9 @@ public class User {
 	
 	@Column(name = "active")
 	private Boolean active;
+	
+	@Column(name = "user_image")
+	private String userImage;
 
 	
 	@ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH},fetch=FetchType.EAGER)
@@ -142,13 +145,13 @@ public class User {
 
 
 
-	public Long getPhone() {
+	public String getPhone() {
 		return phone;
 	}
 
 
 
-	public void setPhone(Long phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 
@@ -247,12 +250,31 @@ public class User {
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
+	
+	
+	
 
 
 
-	public User(Long id, String firstName, String lastName, String username, String email, String password, Long phone,
-			String address, Integer pincode, String location, String country, String recentSearches,
-			String popularSearches, Boolean active, List<Role> roles) {
+	public String getUserImage() {
+		return userImage;
+	}
+
+
+
+	public void setUserImage(String userImage) {
+		this.userImage = userImage;
+	}
+
+
+
+
+
+
+
+	public User(Long id, String firstName, String lastName, String username, String email, String password,
+			String phone, String address, Integer pincode, String location, String country, String recentSearches,
+			String popularSearches, Boolean active, String userImage, List<Role> roles) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -268,6 +290,7 @@ public class User {
 		this.recentSearches = recentSearches;
 		this.popularSearches = popularSearches;
 		this.active = active;
+		this.userImage = userImage;
 		this.roles = roles;
 	}
 

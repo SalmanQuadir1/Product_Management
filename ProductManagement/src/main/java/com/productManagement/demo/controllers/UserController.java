@@ -51,7 +51,7 @@ public class UserController {
 	public ResponseEntity distinctPhone(HttpServletRequest request,HttpServletResponse response,
 			@PathVariable String phone) {
 		List<User> users = userService.findDistinctByPhone(phone);
-		if(users != null && users.size() == 0) {
+		if(users != null && users.size() != 0) {
 			return ResponseEntity.status(HttpStatus.OK).body(true);
 		}else {
 			return ResponseEntity.status(HttpStatus.OK).body(false);
