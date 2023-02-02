@@ -16,9 +16,7 @@ public class ShoppingCart {
 	
 //	@OneToOne
 //	private Order order;
-//	
-//	@OneToMany
-//	private Category category;
+	
 	
 	private String quantity;
 	/*
