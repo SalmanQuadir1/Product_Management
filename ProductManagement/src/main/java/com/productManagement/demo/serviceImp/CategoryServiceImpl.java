@@ -1,5 +1,7 @@
 package com.productManagement.demo.serviceImp;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,12 @@ public class CategoryServiceImpl implements CategoryService {
 	public Category saveCategory(Category category) {
 		// TODO Auto-generated method stub
 		return csRepo.save(category);
+	}
+
+	@Override
+	public List<Category> getAllCategory() {
+		// TODO Auto-generated method stub
+		return csRepo.findByActiveTrue();
 	}
 
 }

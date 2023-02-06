@@ -1,5 +1,7 @@
 package com.productManagement.demo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.productManagement.demo.entity.Category;
@@ -12,4 +14,6 @@ public interface CategoryService {
 	Category getCategoryById(Long id);
 
 	Category saveCategory(Category category);
+
+	List<Category> getAllCategory();
 }

@@ -76,7 +76,7 @@ public class UserController {
 	}
 
 	@PostMapping("/saveUser")
-	public ResponseEntity checkOutOrders(@RequestBody User user, HttpServletRequest request,
+	public ResponseEntity<?> checkOutOrders(@RequestBody User user, HttpServletRequest request,
 			HttpServletResponse response) {
 		User result = userService.save(user);
 		return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -95,7 +95,7 @@ public class UserController {
 	}
 
 	@GetMapping("/distinctPhone/{phone}")
-	public ResponseEntity distinctPhone(HttpServletRequest request, HttpServletResponse response,
+	public ResponseEntity<?> distinctPhone(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable String phone) {
 		List<User> users = userService.findDistinctByPhone(phone);
 		if (users != null && users.size() != 0) {
@@ -104,9 +104,19 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK).body(false);
 		}
 	}
+	
+	@GetMapping("/distinctEmail/{email}")
+	public ResponseEntity<?> distinctEmail(@PathVariable String email ,HttpServletRequest request, HttpServletResponse response){
+		List<User> user = userService.findDistinctByEmail(email);
+		if(user != null && user.size() != 0) {
+			return ResponseEntity.status(HttpStatus.OK).body(true);
+		}else {
+			return ResponseEntity.status(HttpStatus.OK).body(false);
+		}
+	}
 
 	@GetMapping("/getUserDetails/{username}")
-	public ResponseEntity getUserDetails(@PathVariable String username, HttpServletRequest request,
+	public ResponseEntity<?> getUserDetails(@PathVariable String username, HttpServletRequest request,
 			HttpServletResponse response) {
 		List<User> user = userService.getUserDetails(username);
 		return ResponseEntity.status(HttpStatus.OK).body(user);

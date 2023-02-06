@@ -29,4 +29,7 @@ public interface UserService {
 
 	User saveProduct(User user);
 
+
+	List<User> findDistinctByEmail(String email);
+
 }

@@ -1,5 +1,7 @@
 package com.productManagement.demo.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,19 +26,12 @@ public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
 
-	/*
-	 * @PostMapping("/saveCategory") public ResponseEntity<?>
-	 * saveCategory(@RequestBody Category category) { try {
-	 * categoryService.save(category); return
-	 * ResponseEntity.status(HttpStatus.CREATED).body(category);
-	 * 
-	 * } catch (Exception e) {
-	 * 
-	 * return
-	 * ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-	 * 
-	 * } }
-	 */
+
+	@GetMapping("/categories")
+	public ResponseEntity<?> categories(){
+		List<Category> categories = categoryService.getAllCategory();
+		return ResponseEntity.status(HttpStatus.OK).body(categories);
+	}
 	
 	
 	

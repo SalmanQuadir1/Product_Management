@@ -1,14 +1,22 @@
 package com.productManagement.demo.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="product")
 public class Product {
 
 	@Id
@@ -39,9 +47,6 @@ public class Product {
 	@Column(name="details")
 	private String details;
 	
-	@Column(name="product_image")
-	private String productImage;
-	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -50,11 +55,36 @@ public class Product {
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<ProductImages> productImages;
+	
+	/*
+	 * @OneToMany(mappedBy = "images", cascade = CascadeType.ALL, fetch =
+	 * FetchType.LAZY) private List<Images> images = new ArrayList<>();
+	 */
+	@Column(name="images")
+	@OneToMany(cascade = CascadeType.ALL)
+	 private List<Images> images = new ArrayList<>();
 	
 	
 	public Product() {
 		
 	}
+
+
+
+
+	public List<Images> getImages() {
+		return images;
+	}
+
+
+
+
+	public void setImages(List<Images> images) {
+		this.images = images;
+	}
+
 
 
 
@@ -166,23 +196,6 @@ public class Product {
 	
 
 
-
-	public String getProductImage() {
-		return productImage;
-	}
-
-
-
-	public void setProductImage(String productImage) {
-		this.productImage = productImage;
-	}
-
-
-
-
-
-
-
 	public User getUser() {
 		return user;
 	}
@@ -204,6 +217,19 @@ public class Product {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
+	
+	public List<ProductImages> getProductImages() {
+		return productImages;
+	}
+
+
+
+	public void setProductImages(List<ProductImages> productImages) {
+		this.productImages = productImages;
+	}
+	
+	
+	
 
 
 
@@ -212,7 +238,7 @@ public class Product {
 
 
 	public Product(Long id, String productName, String description, Double price, String status, String comments,
-			String reviews, String rating, String details, String productImage, User user, Category category) {
+			String reviews, String rating, String details, User user, Category category) {
 		super();
 		this.id = id;
 		this.productName = productName;
@@ -223,7 +249,7 @@ public class Product {
 		this.reviews = reviews;
 		this.rating = rating;
 		this.details = details;
-		this.productImage = productImage;
+		
 		this.user = user;
 		this.category = category;
 	}

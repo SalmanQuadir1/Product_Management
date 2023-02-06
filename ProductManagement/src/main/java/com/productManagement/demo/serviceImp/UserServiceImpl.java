@@ -66,4 +66,11 @@ public class UserServiceImpl implements  UserService {
 		return userRepoitory.save(userEntity);
 	}
 
+
+	@Override
+	public List<User> findDistinctByEmail(String email) {
+		// TODO Auto-generated method stub
+		return userRepoitory.findDistinctByEmail(email);
+	}
+
 }
