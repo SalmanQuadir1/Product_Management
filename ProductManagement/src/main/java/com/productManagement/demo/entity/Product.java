@@ -55,13 +55,7 @@ public class Product {
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<ProductImages> productImages;
-	
-	/*
-	 * @OneToMany(mappedBy = "images", cascade = CascadeType.ALL, fetch =
-	 * FetchType.LAZY) private List<Images> images = new ArrayList<>();
-	 */
+
 	@Column(name="images")
 	@OneToMany(cascade = CascadeType.ALL)
 	 private List<Images> images = new ArrayList<>();
@@ -217,16 +211,7 @@ public class Product {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
-	
-	public List<ProductImages> getProductImages() {
-		return productImages;
-	}
 
-
-
-	public void setProductImages(List<ProductImages> productImages) {
-		this.productImages = productImages;
-	}
 	
 	
 	
