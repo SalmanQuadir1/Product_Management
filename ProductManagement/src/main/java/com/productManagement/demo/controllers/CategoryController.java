@@ -8,34 +8,31 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.productManagement.demo.entity.Category;
-import com.productManagement.demo.entity.User;
 import com.productManagement.demo.service.CategoryService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
 
-
-	@GetMapping("/categories")
-	public ResponseEntity<?> categories(){
+	@GetMapping("/getcategories")
+	public ResponseEntity<?> categories() {
 		List<Category> categories = categoryService.getAllCategory();
 		return ResponseEntity.status(HttpStatus.OK).body(categories);
 	}
-	
-	
-	
-	@PostMapping("/updateCategory")
+
+	@PostMapping("/addupdateCategory")
 	public ResponseEntity<?> updateUser(@RequestBody Category category, HttpServletRequest request,
 			HttpServletResponse response) {
 		if (category != null && category.getId() != null) {
@@ -52,7 +49,7 @@ public class CategoryController {
 			categoryEntity.setCategoryName(category.getCategoryName());
 			categoryEntity.setDescription(category.getDescription());
 			categoryEntity.setActive(category.isActive());
-			
+
 			Category newUser = categoryService.saveCategory(categoryEntity);
 
 			return ResponseEntity.status(HttpStatus.OK).body(newUser);
@@ -60,5 +57,11 @@ public class CategoryController {
 		} else {
 			return ResponseEntity.badRequest().body("User Details Are missing");
 		}
+	}
+
+	@DeleteMapping("deleteCategory/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable Long id) {
+		categoryService.deleteCategoryById(id);
+		return ResponseEntity.ok().build();
 	}
 }

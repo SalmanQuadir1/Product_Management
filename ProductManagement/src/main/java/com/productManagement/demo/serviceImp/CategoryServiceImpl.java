@@ -47,4 +47,10 @@ public class CategoryServiceImpl implements CategoryService {
 		return csRepo.findByActiveTrue();
 	}
 
+	@Override
+	public void deleteCategoryById(Long id) {
+		csRepo.deleteById(id);
+		
+	}
+
 }

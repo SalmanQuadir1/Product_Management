@@ -1,6 +1,5 @@
 package com.productManagement.demo.controllers;
 
-import java.awt.Image;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,16 +7,15 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +26,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.productManagement.demo.entity.Category;
 import com.productManagement.demo.entity.Images;
 import com.productManagement.demo.entity.Product;
+import com.productManagement.demo.entity.ProductVariant;
+import com.productManagement.demo.repository.CategoryRepository;
 import com.productManagement.demo.repository.ImagesRepository;
 import com.productManagement.demo.repository.ProductRepository;
+import com.productManagement.demo.repository.ProductVariantRepository;
 import com.productManagement.demo.service.ImageService;
 import com.productManagement.demo.service.ProductService;
 
+import models.ProductDto;
+import models.ProductVariantDto;
 import utils.Constants;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -58,6 +61,11 @@ public class ProductController {
 	private ProductRepository prodRepository;
 	@Autowired
 	private ImagesRepository imageRepsitory;
+	@Autowired
+	private ProductVariantRepository pvr;
+	@Autowired
+	private CategoryRepository cr;
+	
 
 	/*
 	 * @PostMapping("/saveProduct") public ResponseEntity<?>
@@ -75,7 +83,7 @@ public class ProductController {
 	 * }
 	 */
 
-	@PostMapping(value = "/addupdateProduct", consumes = { MediaType.APPLICATION_JSON_VALUE,
+	@PostMapping(value = "/updateProduct", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<?> updateProduct(HttpServletRequest request, HttpServletResponse response,
 			@RequestPart Product product, @RequestPart(value = "files", required = false) MultipartFile[] files) {
@@ -122,12 +130,15 @@ public class ProductController {
 			productEntity.setReviews(product.getReviews());
 			productEntity.setStatus(product.getStatus());
 			productEntity.setProductName(product.getProductName());
+//			productEntity.setDescription(productDto.getDescription());
+//			productEntity.setWeights(productDto.getWeight());
 			Product newProduct = prodService.saveProduct(productEntity);
 
 			for (MultipartFile file : files) {
 				Images img = new Images();
 				img.setName(file.getOriginalFilename());
 				img.setType(file.getContentType());
+				
 				img.setProduct(newProduct);
 
 				try {
@@ -139,7 +150,20 @@ public class ProductController {
 				}
 				imageService.save(img);
 			}
+			
+			
 
+			/*
+			 * List<ProductVariantDto> variants = productDto.getVariants(); if (variants !=
+			 * null) { List<ProductVariant> productVariants = variants.stream().map(variant
+			 * -> { ProductVariant productVariant = new ProductVariant();
+			 * productVariant.setSize(variant.getSize());
+			 * productVariant.setQuantity(variant.getQuantity());
+			 * productVariant.setProduct(newProduct); return productVariant;
+			 * }).collect(Collectors.toList()); pvr.saveAll(productVariants);
+			 */
+			
+		
 			return ResponseEntity.status(HttpStatus.OK).body(newProduct);
 
 		} else {
@@ -200,19 +224,47 @@ public class ProductController {
 
 
 	/*
-	 * @PutMapping("/images/{id}") public ResponseEntity<Images>
-	 * updateProductImage(@PathVariable Long id,
+	 * @GetMapping("/{productId}/sizes") public ResponseEntity<Map<String, Integer>>
+	 * getSizesAndQuantitiesByProductId(@PathVariable Long productId) {
+	 * List<Object[]> sizesAndQuantities =
+	 * productVariantRepository.findSizesAndQuantitiesByProductId(productId);
 	 * 
-	 * @RequestParam("files") MultipartFile files) { Images productImage =
-	 * imagesRepository.findById(id).get();
+	 * Map<String, Integer> sizeQuantityMap =
+	 * sizesAndQuantities.stream().collect(Collectors.toMap( sizeAndQuantity ->
+	 * (String) sizeAndQuantity[0], sizeAndQuantity -> ((Number)
+	 * sizeAndQuantity[1]).intValue() ));
 	 * 
-	 * try { productImage.setData(files.getBytes());
-	 * productImage.setFileName(files.getOriginalFilename());
-	 * imagesRepository.save(productImage);
+	 * Map<String, Integer> filteredSizeQuantityMap = new HashMap<>();
+	 * filteredSizeQuantityMap.put("S", sizeQuantityMap.getOrDefault("S", 0));
+	 * filteredSizeQuantityMap.put("XXL", sizeQuantityMap.getOrDefault("XXL", 0));
 	 * 
-	 * return new ResponseEntity<>(productImage, HttpStatus.OK); } catch
-	 * (IOException e) { return new
-	 * ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); } }
+	 * return ResponseEntity.ok(filteredSizeQuantityMap); }
 	 */
+
+	
+
+    @PostMapping("/create")
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+        Product product1 = new Product();
+        product1.setProductName(product.getProductName());
+        product1.setDescription(product.getDescription());
+
+        Product savedProduct = productRepository.save(product1);
+
+        List<ProductVariant> variants = product.getVariants();
+        if (variants != null) {
+            List<ProductVariant> productVariants = variants.stream().map(variant -> {
+                ProductVariant productVariant = new ProductVariant();
+                productVariant.setSize(variant.getSize());
+                productVariant.setQuantity(variant.getQuantity());
+                productVariant.setWeight(variant.getWeight());
+                productVariant.setProduct(savedProduct);
+                return productVariant;
+            }).collect(Collectors.toList());
+            pvr.saveAll(productVariants);
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    }
 
 }

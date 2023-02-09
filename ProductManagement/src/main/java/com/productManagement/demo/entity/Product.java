@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,6 +21,8 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import models.ProductVariantDto;
 
 @Entity
 @Table(name="product")
@@ -53,6 +56,14 @@ public class Product {
 	@Column(name="details")
 	private String details;
 	
+	/*
+	 * @ElementCollection private List<String> sizes;
+	 * 
+	 * @ElementCollection private List<Double> weights;
+	 * 
+	 * @ElementCollection private List<Integer> quantities;
+	 */
+	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -65,6 +76,10 @@ public class Product {
 	@Column(name="images")
 	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
 	 private List<Images> images;
+	
+	@Column(name="variants")
+	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
+	private List<ProductVariant> variants;
 	
 	
 	public Product() {
@@ -224,12 +239,27 @@ public class Product {
 	
 
 
+	public List<ProductVariant> getVariants() {
+		return variants;
+	}
+
+
+	public void setVariants(List<ProductVariant> variants) {
+		this.variants = variants;
+	}
+
+
 	@Override
 	public String toString() {
 		return "Product [id=" + id + ", productName=" + productName + ", description=" + description + ", price="
 				+ price + ", status=" + status + ", comments=" + comments + ", reviews=" + reviews + ", rating="
 				+ rating + ", details=" + details + "]";
 	}
+
+
+
+
+
 	
 	
 	
