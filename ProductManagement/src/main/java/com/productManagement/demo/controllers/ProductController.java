@@ -1,20 +1,22 @@
 package com.productManagement.demo.controllers;
 
+import java.awt.Image;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,19 +28,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import com.productManagement.demo.entity.Images;
 import com.productManagement.demo.entity.Product;
-import com.productManagement.demo.entity.ProductImages;
-import com.productManagement.demo.entity.ResponseMessage;
 import com.productManagement.demo.repository.ImagesRepository;
 import com.productManagement.demo.repository.ProductRepository;
+import com.productManagement.demo.service.ImageService;
 import com.productManagement.demo.service.ProductService;
+
+import utils.Constants;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -49,8 +51,13 @@ public class ProductController {
 	ProductService prodService;
 	@Autowired
 	private ProductRepository productRepository;
+	private Object productImage;
 	@Autowired
-	private ImagesRepository imagesRepository;
+	private ImageService imageService;
+	@Autowired
+	private ProductRepository prodRepository;
+	@Autowired
+	private ImagesRepository imageRepsitory;
 
 	/*
 	 * @PostMapping("/saveProduct") public ResponseEntity<?>
@@ -68,9 +75,10 @@ public class ProductController {
 	 * }
 	 */
 
-	@PostMapping("/updateProduct")
+	@PostMapping(value = "/addupdateProduct", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<?> updateProduct(HttpServletRequest request, HttpServletResponse response,
-			@RequestBody Product product) {
+			@RequestPart Product product, @RequestPart(value = "files", required = false) MultipartFile[] files) {
 		if (product != null && product.getId() != null) {
 			Product productEntity = prodService.getProductById(product.getId());
 			product.setId(productEntity.getId());
@@ -83,6 +91,26 @@ public class ProductController {
 			productEntity.setStatus(product.getStatus());
 			productEntity.setProductName(product.getProductName());
 			Product result = prodService.saveProduct(productEntity);
+
+			// Check if there are any files (images) to update
+
+			if (files != null && files.length > 0) {
+				for (MultipartFile file : files) {
+					Images img = new Images();
+					img.setName(file.getOriginalFilename());
+					img.setType(file.getContentType());
+					img.setProduct(result);
+					try {
+						byte[] bytes = file.getBytes();
+						Path path = Paths.get(Constants.PATH + file.getOriginalFilename());
+						Files.write(path, bytes);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					imageService.save(img);
+				}
+
+			}
 			return ResponseEntity.status(HttpStatus.OK).body(result);
 		} else if (product != null && product.getId() == null) {
 			Product productEntity = new Product();
@@ -94,8 +122,23 @@ public class ProductController {
 			productEntity.setReviews(product.getReviews());
 			productEntity.setStatus(product.getStatus());
 			productEntity.setProductName(product.getProductName());
-
 			Product newProduct = prodService.saveProduct(productEntity);
+
+			for (MultipartFile file : files) {
+				Images img = new Images();
+				img.setName(file.getOriginalFilename());
+				img.setType(file.getContentType());
+				img.setProduct(newProduct);
+
+				try {
+					byte[] bytes = file.getBytes();
+					Path path = Paths.get(Constants.PATH + file.getOriginalFilename());
+					Files.write(path, bytes);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				imageService.save(img);
+			}
 
 			return ResponseEntity.status(HttpStatus.OK).body(newProduct);
 
@@ -104,7 +147,33 @@ public class ProductController {
 		}
 	}
 
+	@GetMapping("/getimage/{imageName:.+}")
+	public void getImage(@PathVariable("imageName") String name, Images images, HttpServletRequest req,
+			HttpServletResponse rep) throws IOException {
 
+		try {
+			InputStream is = new FileInputStream(Constants.PATH + name);
+			byte[] bytes = IOUtils.toByteArray(is);
+			rep.setContentType(getContentType(name));
+			OutputStream os = rep.getOutputStream();
+			os.write(bytes);
+			os.close();
+			is.close();
+		} catch (Exception e) {
+		}
+
+	}
+
+	public static String getContentType(String imageName) {
+		if (imageName.contains(".pdf"))
+			return "application/pdf";
+		else if (imageName.contains(".dwg"))
+			return "imsage/vnd.dwg";
+		else if (imageName.contains(".gif"))
+			return "image/gif";
+		else
+			return "image/jpeg";
+	}
 
 	@GetMapping("/allProducts")
 	public ResponseEntity<?> getAll() {
@@ -112,53 +181,38 @@ public class ProductController {
 		return ResponseEntity.ok(product);
 	}
 
+	@GetMapping("/findProduct/{id}")
+	public ResponseEntity<?> findProduct(@PathVariable("id") Long id, HttpServletRequest request,
+			HttpServletResponse response) {
+		Product prod = prodService.findByIdWithImages(id);
+		return new ResponseEntity<>(prod, HttpStatus.OK);
+	}
+
 	@DeleteMapping("/deleteProduct/{id}")
 	public ResponseEntity<List<Product>> deleteProductItem(@PathVariable("id") Long id, HttpServletRequest request,
 			HttpServletResponse response) {
 		prodService.deleteProductById(id);
 		return ResponseEntity.ok().build();
-	}
-	
-	
-	 
-		/*--------------------------------------------------------------------------*/
-	  
-	  
-	  @PostMapping("/{id}/images")
-	  public ResponseEntity<Product> uploadProductImages(@PathVariable Long id, @RequestParam("files") MultipartFile[] files) throws IOException {
-	    Product product = prodService.findById(id);
-	    
-	    for (MultipartFile file : files) {
-	      Images productImage = new Images();
-	      productImage.setFileName(file.getOriginalFilename());
-	      productImage.setData(file.getBytes());
-	      productImage.setProduct(product);
-	      
-	      product.getImages().add(productImage);
-	      imagesRepository.save(productImage);
-	    }
-	    
-	    prodService.save(product);
-	    
-	    return ResponseEntity.ok(product);
-	  }
-	  
-	  
-	  
-	  @GetMapping("/images/{id}")
-	  public ResponseEntity<byte[]> downloadProductImage(@PathVariable Long id) {
-	    Images productImage = imagesRepository.findById(id).get();
-	    
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setContentType(MediaType.IMAGE_JPEG);
-	    headers.setContentLength(productImage.getData().length);
-	    headers.setContentDispositionFormData("attachment", productImage.getFileName());
-	    
-	    return new ResponseEntity<>(productImage.getData(), headers, HttpStatus.OK);
-	  }
+
 	}
 
+	/*--------------------------------------------------------------------------*/
 
 
+	/*
+	 * @PutMapping("/images/{id}") public ResponseEntity<Images>
+	 * updateProductImage(@PathVariable Long id,
+	 * 
+	 * @RequestParam("files") MultipartFile files) { Images productImage =
+	 * imagesRepository.findById(id).get();
+	 * 
+	 * try { productImage.setData(files.getBytes());
+	 * productImage.setFileName(files.getOriginalFilename());
+	 * imagesRepository.save(productImage);
+	 * 
+	 * return new ResponseEntity<>(productImage, HttpStatus.OK); } catch
+	 * (IOException e) { return new
+	 * ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); } }
+	 */
 
-
+}

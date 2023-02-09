@@ -1,12 +1,16 @@
 package com.productManagement.demo.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Images {
@@ -15,13 +19,18 @@ public class Images {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	 private String fileName;
-	  
-	  @Lob
-	  private byte[] data;
+	@Column(name="type")
+	String type;
 	
-	@ManyToOne
-	@JoinColumn(name = "product_id")
+	@Column(name="image")
+	String image;
+	
+	@Column(name="name")
+	String name;
+
+	
+	@ManyToOne()
+	@JoinColumn(name = "product_id" )	
 	private Product product;
 	
 	
@@ -38,26 +47,36 @@ public class Images {
 	}
 
 
-	public String getFileName() {
-		return fileName;
+	public String getType() {
+		return type;
 	}
 
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setType(String type) {
+		this.type = type;
 	}
 
 
-	public byte[] getData() {
-		return data;
+	public String getImage() {
+		return image;
 	}
 
 
-	public void setData(byte[] data) {
-		this.data = data;
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@JsonIgnore
 	public Product getProduct() {
 		return product;
 	}
@@ -67,14 +86,15 @@ public class Images {
 		this.product = product;
 	}
 
+	
+	
 
-	public Images(Long id, String fileName, byte[] data, Product product) {
-		super();
-		this.id = id;
-		this.fileName = fileName;
-		this.data = data;
-		this.product = product;
-	}
+
+
+
+
+	
+
 	
 	
 

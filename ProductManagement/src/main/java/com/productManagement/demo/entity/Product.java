@@ -1,6 +1,5 @@
 package com.productManagement.demo.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,6 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="product")
@@ -57,8 +63,8 @@ public class Product {
 	
 
 	@Column(name="images")
-	@OneToMany(cascade = CascadeType.ALL)
-	 private List<Images> images = new ArrayList<>();
+	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
+	 private List<Images> images;
 	
 	
 	public Product() {
@@ -66,7 +72,10 @@ public class Product {
 	}
 
 
-
+	  @JsonIgnore
+	  public Product getProduct() {
+	    return this;
+	  }
 
 	public List<Images> getImages() {
 		return images;
@@ -213,32 +222,6 @@ public class Product {
 	}
 
 	
-	
-	
-
-
-
-	
-
-
-
-	public Product(Long id, String productName, String description, Double price, String status, String comments,
-			String reviews, String rating, String details, User user, Category category) {
-		super();
-		this.id = id;
-		this.productName = productName;
-		this.description = description;
-		this.price = price;
-		this.status = status;
-		this.comments = comments;
-		this.reviews = reviews;
-		this.rating = rating;
-		this.details = details;
-		
-		this.user = user;
-		this.category = category;
-	}
-
 
 
 	@Override

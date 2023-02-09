@@ -46,11 +46,12 @@ public class ProductServiceImp implements ProductService {
 		return result;
 	}
 
-	@Override
-	public void deleteProductById(Long id) {
-		productRepo.deleteById(id);
-
-	}
+	/*
+	 * @Override public Product deleteProductById(Long id) {
+	 * productRepo.deleteById(id);
+	 * 
+	 * }
+	 */
 
 
 	@Override
@@ -94,6 +95,24 @@ public class ProductServiceImp implements ProductService {
 		// TODO Auto-generated method stub
 		return productRepo.findById(id).get();
 	}
+
+
+	@Override
+	public Product findByIdWithImages(Long id) {
+		// TODO Auto-generated method stub
+		return productRepo.findByIdWithImages(id);
+	}
+
+
+	@Override
+	public void deleteProductById(Long id) {
+		productRepo.deleteById(id);
+	}
+
+
+
+
+
 
 
 	

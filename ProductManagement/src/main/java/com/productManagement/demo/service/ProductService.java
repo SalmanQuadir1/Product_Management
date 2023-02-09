@@ -49,4 +49,8 @@ public interface ProductService {
 	Product findById(Long id);
 
 
+
+	Product findByIdWithImages(Long id);
+
+
 }
