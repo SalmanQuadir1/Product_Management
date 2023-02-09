@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.productManagement.demo.service.ProductService;
 
 @SpringBootApplication
-public class ProductManagementApplication implements CommandLineRunner {
+public class ProductManagementApplication {
 	@Autowired
 	private ProductService prodService;
 
@@ -17,11 +17,11 @@ public class ProductManagementApplication implements CommandLineRunner {
 		System.out.println("Localhost:8087");
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		prodService.deleteAll();
-		prodService.init();
-		
-	}
+	/*
+	 * @Override public void run(String... args) throws Exception {
+	 * prodService.deleteAll(); prodService.init();
+	 * 
+	 * }
+	 */
 
 }

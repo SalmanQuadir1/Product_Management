@@ -152,16 +152,18 @@ public class ProductController {
 			}
 			
 			
-
-			/*
-			 * List<ProductVariantDto> variants = productDto.getVariants(); if (variants !=
-			 * null) { List<ProductVariant> productVariants = variants.stream().map(variant
-			 * -> { ProductVariant productVariant = new ProductVariant();
-			 * productVariant.setSize(variant.getSize());
-			 * productVariant.setQuantity(variant.getQuantity());
-			 * productVariant.setProduct(newProduct); return productVariant;
-			 * }).collect(Collectors.toList()); pvr.saveAll(productVariants);
-			 */
+			  List<ProductVariant> variants = product.getVariants();
+		        if (variants != null) {
+		            List<ProductVariant> productVariants = variants.stream().map(variant -> {
+		                ProductVariant productVariant = new ProductVariant();
+		                productVariant.setSize(variant.getSize());
+		                productVariant.setQuantity(variant.getQuantity());
+		                productVariant.setWeight(variant.getWeight());
+		                productVariant.setProduct(newProduct);
+		                return productVariant;
+		            }).collect(Collectors.toList());
+		            pvr.saveAll(productVariants);
+		        }
 			
 		
 			return ResponseEntity.status(HttpStatus.OK).body(newProduct);
