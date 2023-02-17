@@ -16,9 +16,8 @@ public interface ImageService {
 
 	Images getImageById(Long id);
 
-	Images getImagesForProduct(Long productId);
+	List<Images> getImagesForProduct(Long productId);
 
-	
 
 	
 

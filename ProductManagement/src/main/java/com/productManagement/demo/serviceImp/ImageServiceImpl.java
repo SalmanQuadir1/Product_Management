@@ -35,17 +35,17 @@ public class ImageServiceImpl implements ImageService{
 		return imageRepository.findById(id).get();
 	}
 
-	@Override
-	public Images getImagesForProduct(Long productId) {
-		// TODO Auto-generated method stub
-		return imageRepository.findByProduct_Id( productId);
-	}
-
 //	@Override
-//	public List<Images> getImagesForProduct(Long productId) {
+//	public Images getImagesForProduct(Long productId) {
 //		// TODO Auto-generated method stub
 //		return imageRepository.findByProduct_Id( productId);
 //	}
+
+	@Override
+	public List<Images> getImagesForProduct(Long productId) {
+		// TODO Auto-generated method stub
+		return imageRepository.findByProduct_Id( productId);
+	}
 
 
 	

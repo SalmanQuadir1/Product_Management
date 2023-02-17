@@ -1,5 +1,7 @@
 package com.productManagement.demo.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -79,17 +82,41 @@ public class ImageController {
 		return ResponseEntity.status(HttpStatus.OK).body(updatedImage);
 	}
 	
-	  @GetMapping("/{productId}/image")
-	    public ResponseEntity<byte[]> getImagesForProduct(@PathVariable Long productId) {
-	        Images image =  imageService.getImagesForProduct(productId);
-	        try {
-				Path path = Paths.get(Constants.PATH + image.getName());
-				byte[] data = Files.readAllBytes(path);
-				return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getType())).body(data);
-			} catch (IOException e) {
-				e.printStackTrace();
-				return ResponseEntity.notFound().build();
-			}
+//	  @GetMapping("/{productId}/image")
+//	    public ResponseEntity<byte[]> getImagesForProduct(@PathVariable Long productId) {
+//	        Images image =  imageService.getImagesForProduct(productId);
+//	        try {
+//				Path path = Paths.get(Constants.PATH + image.getName());
+//				byte[] data = Files.readAllBytes(path);
+//				return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getType())).body(data);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//				return ResponseEntity.notFound().build();
+//			}
+//	    }
+	    
+	 @GetMapping("/{productId}/image")
+	    public ResponseEntity<byte[]> getImagesForProduct(@PathVariable Long productId) throws IOException {
+	        List<Images> images = imageService.getImagesForProduct(productId);
+
+	        if (images.isEmpty()) {
+	            return ResponseEntity.notFound().build();
+	        }
+
+	        Images image = images.get(0);
+	        File file = new File(Constants.PATH + image.getName());
+
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.parseMediaType(image.getType()));
+	        headers.setContentLength(file.length());
+	        headers.setContentDispositionFormData("attachment", file.getName());
+
+	        FileInputStream fileInputStream = new FileInputStream(file);
+	        byte[] data = new byte[(int)file.length()];
+	        fileInputStream.read(data);
+	        fileInputStream.close();
+
+	        return new ResponseEntity<>(data, headers, HttpStatus.OK);
 	    }
 
 }
