@@ -1,17 +1,13 @@
 package com.productManagement.demo.controllers;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +23,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,9 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.productManagement.demo.entity.Images;
 import com.productManagement.demo.entity.Product;
 import com.productManagement.demo.entity.ProductVariant;
-import com.productManagement.demo.repository.CategoryRepository;
-import com.productManagement.demo.repository.ImagesRepository;
-import com.productManagement.demo.repository.ProductRepository;
 import com.productManagement.demo.repository.ProductVariantRepository;
 import com.productManagement.demo.service.ImageService;
 import com.productManagement.demo.service.ProductService;
@@ -53,35 +44,16 @@ public class ProductController {
 
 	@Autowired
 	ProductService prodService;
-	@Autowired
-	private ProductRepository productRepository;
-	private Object productImage;
+	
+	//private Object productImage;
 	@Autowired
 	private ImageService imageService;
-	@Autowired
-	private ProductRepository prodRepository;
-	@Autowired
-	private ImagesRepository imageRepsitory;
+	
+
 	@Autowired
 	private ProductVariantRepository pvr;
-	@Autowired
-	private CategoryRepository cr;
 
-	/*
-	 * @PostMapping("/saveProduct") public ResponseEntity<?>
-	 * saveProduct(@RequestBody Product product) {
-	 * System.out.println("Product Saved !!!"); try { prodService.save(product);
-	 * return ResponseEntity.status(HttpStatus.CREATED).body(product);
-	 * 
-	 * } catch (Exception e) {
-	 * 
-	 * return
-	 * ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
+
 	@PostMapping(value = "/updateProduct", consumes = { "multipart/form-data",
 			MediaType.MULTIPART_FORM_DATA_VALUE }) /*
 													 * headers = "content-type=multipart/*", consumes = {
@@ -148,16 +120,19 @@ public class ProductController {
 				img.setName(file.getOriginalFilename());
 				System.out.println(file.getOriginalFilename() + "jjjjjjjjjjjjjjjj");
 				img.setType(file.getContentType());
-
+				try {
+					img.setImage(file.getBytes());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				img.setProduct(newProduct);
 
-				try {
-					byte[] bytes = file.getBytes();
-					Path path = Paths.get(Constants.PATH + file.getOriginalFilename());
-					Files.write(path, bytes);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				/*
+				 * try { byte[] bytes = file.getBytes(); Path path = Paths.get(Constants.PATH +
+				 * file.getOriginalFilename()); Files.write(path, bytes); } catch (IOException
+				 * e) { e.printStackTrace(); }
+				 */
 
 				imageService.save(img);
 			}

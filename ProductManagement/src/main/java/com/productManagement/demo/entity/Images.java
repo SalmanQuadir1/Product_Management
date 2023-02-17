@@ -24,7 +24,7 @@ public class Images {
 	String type;
 	
 	@Column(name="image")
-	String image;
+	byte[] image;
 	
 	@Column(name="name")
 	String name;
@@ -58,12 +58,18 @@ public class Images {
 	}
 
 
-	public String getImage() {
+	
+
+
+	
+
+
+	public byte[] getImage() {
 		return image;
 	}
 
 
-	public void setImage(String image) {
+	public void setImage(byte[] image) {
 		this.image = image;
 	}
 
