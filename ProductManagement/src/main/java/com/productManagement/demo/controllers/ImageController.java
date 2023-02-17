@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,5 +78,18 @@ public class ImageController {
 		Images updatedImage = imageRepository.save(image);
 		return ResponseEntity.status(HttpStatus.OK).body(updatedImage);
 	}
+	
+	  @GetMapping("/{productId}/image")
+	    public ResponseEntity<byte[]> getImagesForProduct(@PathVariable Long productId) {
+	        Images image =  imageService.getImagesForProduct(productId);
+	        try {
+				Path path = Paths.get(Constants.PATH + image.getName());
+				byte[] data = Files.readAllBytes(path);
+				return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getType())).body(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return ResponseEntity.notFound().build();
+			}
+	    }
 
 }

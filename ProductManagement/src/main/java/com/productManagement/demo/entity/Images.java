@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -33,7 +34,7 @@ public class Images {
 	@JoinColumn(name = "product_id" )	
 	private Product product;
 	
-	
+	@JsonCreator
 	public Images() {}
 
 

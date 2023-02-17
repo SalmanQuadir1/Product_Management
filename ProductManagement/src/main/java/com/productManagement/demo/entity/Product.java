@@ -1,5 +1,6 @@
 package com.productManagement.demo.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -56,13 +57,6 @@ public class Product {
 	@Column(name="details")
 	private String details;
 	
-	/*
-	 * @ElementCollection private List<String> sizes;
-	 * 
-	 * @ElementCollection private List<Double> weights;
-	 * 
-	 * @ElementCollection private List<Integer> quantities;
-	 */
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -75,7 +69,7 @@ public class Product {
 
 	@Column(name="images")
 	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
-	 private List<Images> images;
+	 private List<Images> images = new ArrayList<>();
 	
 	@Column(name="variants")
 	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL)

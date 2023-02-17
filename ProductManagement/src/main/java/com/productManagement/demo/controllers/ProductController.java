@@ -1,14 +1,17 @@
 package com.productManagement.demo.controllers;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.productManagement.demo.entity.Category;
 import com.productManagement.demo.entity.Images;
 import com.productManagement.demo.entity.Product;
 import com.productManagement.demo.entity.ProductVariant;
@@ -41,8 +44,6 @@ import com.productManagement.demo.repository.ProductVariantRepository;
 import com.productManagement.demo.service.ImageService;
 import com.productManagement.demo.service.ProductService;
 
-import models.ProductDto;
-import models.ProductVariantDto;
 import utils.Constants;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -65,7 +66,6 @@ public class ProductController {
 	private ProductVariantRepository pvr;
 	@Autowired
 	private CategoryRepository cr;
-	
 
 	/*
 	 * @PostMapping("/saveProduct") public ResponseEntity<?>
@@ -82,11 +82,20 @@ public class ProductController {
 	 * 
 	 * }
 	 */
-
-	@PostMapping(value = "/updateProduct", consumes = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.MULTIPART_FORM_DATA_VALUE })
+	@PostMapping(value = "/updateProduct", consumes = { "multipart/form-data",
+			MediaType.MULTIPART_FORM_DATA_VALUE }) /*
+													 * headers = "content-type=multipart/*", consumes = {
+													 * MediaType.APPLICATION_JSON_VALUE,
+													 * MediaType.MULTIPART_FORM_DATA_VALUE, "application/*" })
+													 */
 	public ResponseEntity<?> updateProduct(HttpServletRequest request, HttpServletResponse response,
 			@RequestPart Product product, @RequestPart(value = "files", required = false) MultipartFile[] files) {
+		System.err.println(product.getProduct() + "bbbbbbbbbbbbbb");
+		for (MultipartFile multipartFile : files) {
+			System.err.println("hehehehheh" + multipartFile.getContentType());
+			System.err.println("nameeee" + multipartFile.getOriginalFilename());
+		}
+
 		if (product != null && product.getId() != null) {
 			Product productEntity = prodService.getProductById(product.getId());
 			product.setId(productEntity.getId());
@@ -106,6 +115,7 @@ public class ProductController {
 				for (MultipartFile file : files) {
 					Images img = new Images();
 					img.setName(file.getOriginalFilename());
+
 					img.setType(file.getContentType());
 					img.setProduct(result);
 					try {
@@ -130,15 +140,15 @@ public class ProductController {
 			productEntity.setReviews(product.getReviews());
 			productEntity.setStatus(product.getStatus());
 			productEntity.setProductName(product.getProductName());
-//			productEntity.setDescription(productDto.getDescription());
-//			productEntity.setWeights(productDto.getWeight());
 			Product newProduct = prodService.saveProduct(productEntity);
-
+			System.err.println(product.getDescription() + "aaaaaaaaaaaaaaaaaaaaa");
 			for (MultipartFile file : files) {
+
 				Images img = new Images();
 				img.setName(file.getOriginalFilename());
+				System.out.println(file.getOriginalFilename() + "jjjjjjjjjjjjjjjj");
 				img.setType(file.getContentType());
-				
+
 				img.setProduct(newProduct);
 
 				try {
@@ -148,24 +158,23 @@ public class ProductController {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+
 				imageService.save(img);
 			}
-			
-			
-			  List<ProductVariant> variants = product.getVariants();
-		        if (variants != null) {
-		            List<ProductVariant> productVariants = variants.stream().map(variant -> {
-		                ProductVariant productVariant = new ProductVariant();
-		                productVariant.setSize(variant.getSize());
-		                productVariant.setQuantity(variant.getQuantity());
-		                productVariant.setWeight(variant.getWeight());
-		                productVariant.setProduct(newProduct);
-		                return productVariant;
-		            }).collect(Collectors.toList());
-		            pvr.saveAll(productVariants);
-		        }
-			
-		
+
+			List<ProductVariant> variants = product.getVariants();
+			if (variants != null) {
+				List<ProductVariant> productVariants = variants.stream().map(variant -> {
+					ProductVariant productVariant = new ProductVariant();
+					productVariant.setSize(variant.getSize());
+					productVariant.setQuantity(variant.getQuantity());
+					productVariant.setWeight(variant.getWeight());
+					productVariant.setProduct(newProduct);
+					return productVariant;
+				}).collect(Collectors.toList());
+				pvr.saveAll(productVariants);
+			}
+
 			return ResponseEntity.status(HttpStatus.OK).body(newProduct);
 
 		} else {
@@ -173,7 +182,7 @@ public class ProductController {
 		}
 	}
 
-	@GetMapping("/getimage/{imageName:.+}")
+	@GetMapping("/getImage/{imageName:.+}")
 	public void getImage(@PathVariable("imageName") String name, Images images, HttpServletRequest req,
 			HttpServletResponse rep) throws IOException {
 
@@ -221,20 +230,19 @@ public class ProductController {
 		return ResponseEntity.ok().build();
 
 	}
+	
+	
 
 	/*--------------------------------------------------------------------------*/
 
-
 	/*
-	 * @GetMapping("/{productId}/sizes") public ResponseEntity<Map<String, Integer>>
-	 * getSizesAndQuantitiesByProductId(@PathVariable Long productId) {
-	 * List<Object[]> sizesAndQuantities =
-	 * productVariantRepository.findSizesAndQuantitiesByProductId(productId);
+	 * @GetMapping("/{id}/sizes") public ResponseEntity<Map<String, Integer>>
+	 * getSizesAndQuantitiesByProductId(@PathVariable Long id) { List<Object[]>
+	 * sizesAndQuantities = pvr.findSizesAndQuantitiesByProductId(id);
 	 * 
-	 * Map<String, Integer> sizeQuantityMap =
-	 * sizesAndQuantities.stream().collect(Collectors.toMap( sizeAndQuantity ->
-	 * (String) sizeAndQuantity[0], sizeAndQuantity -> ((Number)
-	 * sizeAndQuantity[1]).intValue() ));
+	 * Map<String, Integer> sizeQuantityMap = sizesAndQuantities.stream()
+	 * .collect(Collectors.toMap(sizeAndQuantity -> (String) sizeAndQuantity[0],
+	 * sizeAndQuantity -> ((Number) sizeAndQuantity[1]).intValue()));
 	 * 
 	 * Map<String, Integer> filteredSizeQuantityMap = new HashMap<>();
 	 * filteredSizeQuantityMap.put("S", sizeQuantityMap.getOrDefault("S", 0));
@@ -243,30 +251,5 @@ public class ProductController {
 	 * return ResponseEntity.ok(filteredSizeQuantityMap); }
 	 */
 
-	
-
-    @PostMapping("/create")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        Product product1 = new Product();
-        product1.setProductName(product.getProductName());
-        product1.setDescription(product.getDescription());
-
-        Product savedProduct = productRepository.save(product1);
-
-        List<ProductVariant> variants = product.getVariants();
-        if (variants != null) {
-            List<ProductVariant> productVariants = variants.stream().map(variant -> {
-                ProductVariant productVariant = new ProductVariant();
-                productVariant.setSize(variant.getSize());
-                productVariant.setQuantity(variant.getQuantity());
-                productVariant.setWeight(variant.getWeight());
-                productVariant.setProduct(savedProduct);
-                return productVariant;
-            }).collect(Collectors.toList());
-            pvr.saveAll(productVariants);
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
-    }
 
 }

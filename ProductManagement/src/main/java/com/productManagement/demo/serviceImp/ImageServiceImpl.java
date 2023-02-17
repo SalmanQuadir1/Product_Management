@@ -1,5 +1,7 @@
 package com.productManagement.demo.serviceImp;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,18 @@ public class ImageServiceImpl implements ImageService{
 	public Images getImageById(Long id) {
 		return imageRepository.findById(id).get();
 	}
+
+	@Override
+	public Images getImagesForProduct(Long productId) {
+		// TODO Auto-generated method stub
+		return imageRepository.findByProduct_Id( productId);
+	}
+
+//	@Override
+//	public List<Images> getImagesForProduct(Long productId) {
+//		// TODO Auto-generated method stub
+//		return imageRepository.findByProduct_Id( productId);
+//	}
 
 
 	

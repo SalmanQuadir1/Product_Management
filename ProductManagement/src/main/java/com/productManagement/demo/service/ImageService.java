@@ -1,5 +1,7 @@
 package com.productManagement.demo.service;
 
+import java.util.List;
+
 import com.productManagement.demo.entity.Images;
 
 public interface ImageService {
@@ -14,6 +16,9 @@ public interface ImageService {
 
 	Images getImageById(Long id);
 
+	Images getImagesForProduct(Long productId);
+
+	
 
 	
 
