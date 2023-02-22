@@ -24,102 +24,102 @@ import com.productManagement.demo.service.UserService;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@PostMapping("/updateUser")
-	public ResponseEntity<?> updateUser(@RequestBody User user, HttpServletRequest request,
-			HttpServletResponse response) {
-		if (user != null && user.getId() != null) {
-			User userEntity = userService.getUserById(user.getId());
-			userEntity.setId(user.getId());
-			userEntity.setFirstName(user.getFirstName());
-			userEntity.setLastName(user.getLastName());
-			userEntity.setActive(user.getActive());
-			userEntity.setAddress(user.getAddress());
-			userEntity.setCountry(user.getCountry());
-			userEntity.setEmail(user.getEmail());
-			userEntity.setLocation(user.getLocation());
-			userEntity.setPassword(user.getPassword());
-			userEntity.setPhone(user.getPhone());
-			userEntity.setPincode(user.getPincode());
-			userEntity.setPopularSearches(user.getPopularSearches());
-			userEntity.setRecentSearches(user.getRecentSearches());
-			userEntity.setRoles(user.getRoles());
-			userEntity.setProduct(user.getProduct());
-			
-			User result = userService.saveProduct(userEntity);
-			return ResponseEntity.status(HttpStatus.OK).body(result);
-		} else if (user != null && user.getId() == null) {
-			User userEntity = new User();
-			userEntity.setFirstName(user.getFirstName());
-			userEntity.setLastName(user.getLastName());
-			userEntity.setActive(user.getActive());
-			userEntity.setAddress(user.getAddress());
-			userEntity.setCountry(user.getCountry());
-			userEntity.setEmail(user.getEmail());
-			userEntity.setLocation(user.getLocation());
-			userEntity.setPassword(user.getPassword());
-			userEntity.setPhone(user.getPhone());
-			userEntity.setPincode(user.getPincode());
-			userEntity.setPopularSearches(user.getPopularSearches());
-			userEntity.setRecentSearches(user.getRecentSearches());
-			userEntity.setRoles(user.getRoles());
-			userEntity.setProduct(user.getProduct());
-			User newUser = userService.saveProduct(userEntity);
+    @PostMapping("/updateUser")
+    public ResponseEntity<?> updateUser(@RequestBody User user, HttpServletRequest request,
+                                        HttpServletResponse response) {
+        if (user != null && user.getId() != null) {
+            User userEntity = userService.getUserById(user.getId());
+            userEntity.setId(user.getId());
+            userEntity.setFirstName(user.getFirstName());
+            userEntity.setLastName(user.getLastName());
+            userEntity.setActive(user.getActive());
+            userEntity.setAddress(user.getAddress());
+            userEntity.setCountry(user.getCountry());
+            userEntity.setEmail(user.getEmail());
+            userEntity.setLocation(user.getLocation());
+            userEntity.setPassword(user.getPassword());
+            userEntity.setPhone(user.getPhone());
+            userEntity.setPincode(user.getPincode());
+            userEntity.setPopularSearches(user.getPopularSearches());
+            userEntity.setRecentSearches(user.getRecentSearches());
+            userEntity.setRoles(user.getRoles());
+            userEntity.setProduct(user.getProduct());
 
-			return ResponseEntity.status(HttpStatus.OK).body(newUser);
+            User result = userService.saveProduct(userEntity);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else if (user != null && user.getId() == null) {
+            User userEntity = new User();
+            userEntity.setFirstName(user.getFirstName());
+            userEntity.setLastName(user.getLastName());
+            userEntity.setActive(user.getActive());
+            userEntity.setAddress(user.getAddress());
+            userEntity.setCountry(user.getCountry());
+            userEntity.setEmail(user.getEmail());
+            userEntity.setLocation(user.getLocation());
+            userEntity.setPassword(user.getPassword());
+            userEntity.setPhone(user.getPhone());
+            userEntity.setPincode(user.getPincode());
+            userEntity.setPopularSearches(user.getPopularSearches());
+            userEntity.setRecentSearches(user.getRecentSearches());
+            userEntity.setRoles(user.getRoles());
+            userEntity.setProduct(user.getProduct());
+            User newUser = userService.saveProduct(userEntity);
 
-		} else {
-			return ResponseEntity.badRequest().body("User Details Are missing");
-		}
-	}
+            return ResponseEntity.status(HttpStatus.OK).body(newUser);
 
-	@PostMapping("/saveUser")
-	public ResponseEntity<?> checkOutOrders(@RequestBody User user, HttpServletRequest request,
-			HttpServletResponse response) {
-		User result = userService.save(user);
-		return ResponseEntity.status(HttpStatus.OK).body(result);
-	}
+        } else {
+            return ResponseEntity.badRequest().body("User Details Are missing");
+        }
+    }
 
-	@GetMapping("/all")
-	public ResponseEntity<?> getAll() {
-		List<User> user = userService.findAll();
-		return ResponseEntity.ok(user);
-	}
+    @PostMapping("/saveUser")
+    public ResponseEntity<?> checkOutOrders(@RequestBody User user, HttpServletRequest request,
+                                            HttpServletResponse response) {
+        User result = userService.save(user);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
-	@GetMapping("/findUser/{id}")
-	public ResponseEntity<?> getById(@PathVariable("id") Long id) {
-		Optional<User> user = userService.findById(id);
-		return ResponseEntity.ok(user);
-	}
+    @GetMapping("/all")
+    public ResponseEntity<?> getAll() {
+        List<User> user = userService.findAll();
+        return ResponseEntity.ok(user);
+    }
 
-	@GetMapping("/distinctPhone/{phone}")
-	public ResponseEntity<?> distinctPhone(HttpServletRequest request, HttpServletResponse response,
-			@PathVariable String phone) {
-		List<User> users = userService.findDistinctByPhone(phone);
-		if (users != null && users.size() != 0) {
-			return ResponseEntity.status(HttpStatus.OK).body(true);
-		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(false);
-		}
-	}
-	
-	@GetMapping("/distinctEmail/{email}")
-	public ResponseEntity<?> distinctEmail(@PathVariable String email ,HttpServletRequest request, HttpServletResponse response){
-		List<User> user = userService.findDistinctByEmail(email);
-		if(user != null && user.size() != 0) {
-			return ResponseEntity.status(HttpStatus.OK).body(true);
-		}else {
-			return ResponseEntity.status(HttpStatus.OK).body(false);
-		}
-	}
+    @GetMapping("/findUser/{id}")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+        Optional<User> user = userService.findById(id);
+        return ResponseEntity.ok(user);
+    }
 
-	@GetMapping("/getUserDetails/{username}")
-	public ResponseEntity<?> getUserDetails(@PathVariable String username, HttpServletRequest request,
-			HttpServletResponse response) {
-		List<User> user = userService.getUserDetails(username);
-		return ResponseEntity.status(HttpStatus.OK).body(user);
-	}
+    @GetMapping("/distinctPhone/{phone}")
+    public ResponseEntity<?> distinctPhone(HttpServletRequest request, HttpServletResponse response,
+                                           @PathVariable String phone) {
+        List<User> users = userService.findDistinctByPhone(phone);
+        if (users != null && users.size() != 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(false);
+        }
+    }
+
+    @GetMapping("/distinctEmail/{email}")
+    public ResponseEntity<?> distinctEmail(@PathVariable String email, HttpServletRequest request, HttpServletResponse response) {
+        List<User> user = userService.findDistinctByEmail(email);
+        if (user != null && user.size() != 0) {
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(false);
+        }
+    }
+
+    @GetMapping("/getUserDetails/{username}")
+    public ResponseEntity<?> getUserDetails(@PathVariable String username, HttpServletRequest request,
+                                            HttpServletResponse response) {
+        List<User> user = userService.getUserDetails(username);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
 
 }

@@ -32,4 +32,16 @@ public interface UserService {
 
 	List<User> findDistinctByEmail(String email);
 
+
+	User findByLogin(String issuer);
+
+
+	User authenticate(User credentialsDto);
+
+
+	
+
+
+	
+
 }

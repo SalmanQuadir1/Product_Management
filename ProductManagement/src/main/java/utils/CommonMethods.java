@@ -48,7 +48,16 @@ public class CommonMethods {
 		return ("data:image/image/jpeg;base64,"+encodedBase64);
 	}
 
-	
+	public static String getContentType(String imageName) {
+	if (imageName.contains(".pdf"))
+		return "application/pdf";
+	else if (imageName.contains(".dwg"))
+		return "imsage/vnd.dwg";
+	else if (imageName.contains(".gif"))
+		return "image/gif";
+	else
+		return "image/jpeg";
+}
 
 	
 

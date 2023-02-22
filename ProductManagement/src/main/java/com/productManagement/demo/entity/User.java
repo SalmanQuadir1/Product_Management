@@ -1,5 +1,6 @@
 package com.productManagement.demo.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -64,10 +65,14 @@ public class User {
 
 	@Column(name = "user_image")
 	private String userImage;
+	
+	private String login;
+	
+	private String token;
 
 	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<Role> roles;
+	private List<Role> roles = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -205,6 +210,15 @@ public class User {
 	}
 	
 	
+	
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
 
 	public List<Product> getProduct() {
 		return product;
@@ -214,35 +228,26 @@ public class User {
 		this.product = product;
 	}
 
-	public User(Long id, String firstName, String lastName, String username, String email, String password,
-			String phone, String address, Integer pincode, String location, String country, String recentSearches,
-			String popularSearches, Boolean active, String userImage, List<Role> roles) {
-		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.username = username;
-		this.email = email;
-		this.password = password;
-		this.phone = phone;
-		this.address = address;
-		this.pincode = pincode;
-		this.location = location;
-		this.country = country;
-		this.recentSearches = recentSearches;
-		this.popularSearches = popularSearches;
-		this.active = active;
-		this.userImage = userImage;
-		this.roles = roles;
+	public String getToken() {
+		return token;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", username=" + username
-				+ ", email=" + email + ", password=" + password + ", phone=" + phone + ", address=" + address
-				+ ", pincode=" + pincode + ", location=" + location + ", country=" + country + ", recentSearches="
-				+ recentSearches + ", popularSearches=" + popularSearches + ", active=" + active + ", roles=" + roles
-				+ "]";
+	public void setToken(String token) {
+		this.token = token;
 	}
+
+	public User(String username, String password, String token) {
+		this.username = username;
+		this.password = password;
+		this.token = token;
+	}
+	public User(String username, String password) {
+		this.username = username;
+		this.password = password;
+		
+	}
+
+	
+	
 
 }

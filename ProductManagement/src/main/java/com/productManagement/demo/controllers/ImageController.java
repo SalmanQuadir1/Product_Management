@@ -42,119 +42,66 @@ import utils.Constants;
 @RestController
 @RequestMapping("/images")
 public class ImageController {
-	@Autowired
-	private ImagesRepository imageRepository;
-	@Autowired
-	private ImageService imageService;
-	@Autowired
-	private ProductService prodService;
-	
-	@Autowired
-	ProductRepository prodRepo;
+    @Autowired
+    private ImagesRepository imageRepository;
+    @Autowired
+    private ImageService imageService;
+    @Autowired
+    private ProductService prodService;
 
-	@GetMapping("/images/{id}")
-	public ResponseEntity<?> getImageById(@PathVariable Long id) {
-		Images image = imageService.findById(id);
-		try {
-			Path path = Paths.get(Constants.PATH + image.getName());
-			byte[] data = Files.readAllBytes(path);
-			return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getType())).body(data);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return ResponseEntity.notFound().build();
-		}
-	}
+    @Autowired
+    ProductRepository prodRepo;
 
-	@PutMapping("updateimage")
-	public ResponseEntity<?> updateImage(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("productId") Long productId, @RequestParam("id") Long id,
-			@RequestParam("file") MultipartFile file) {
+    @GetMapping("/images/{id}")
+    public ResponseEntity<?> getImageById(@PathVariable Long id) {
+        Images image = imageService.findById(id);
+        try {
+            Path path = Paths.get(Constants.PATH + image.getName());
+            byte[] data = Files.readAllBytes(path);
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getType())).body(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-		Product product = prodService.getProductById(productId);
-		Images image = imageService.getImageById(id);
-		if (product == null || image == null) {
-			return ResponseEntity.badRequest().body("Product or Image not found");
-		}
+    @PutMapping("updateimage")
+    public ResponseEntity<?> updateImage(HttpServletRequest request, HttpServletResponse response,
+                                         @RequestParam("productId") Long productId, @RequestParam("id") Long id,
+                                         @RequestParam("file") MultipartFile file) {
 
-		image.setName(file.getOriginalFilename());
-		image.setType(file.getContentType());
-		image.setProduct(product);
+        Product product = prodService.getProductById(productId);
+        Images image = imageService.getImageById(id);
+        if (product == null || image == null) {
+            return ResponseEntity.badRequest().body("Product or Image not found");
+        }
 
-		try {
-			byte[] bytes = file.getBytes();
-			Path path = Paths.get(Constants.PATH + file.getOriginalFilename());
-			Files.write(path, bytes);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        image.setName(file.getOriginalFilename());
+        image.setType(file.getContentType());
+        image.setProduct(product);
 
-		Images updatedImage = imageRepository.save(image);
-		return ResponseEntity.status(HttpStatus.OK).body(updatedImage);
-	}
+        try {
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(Constants.PATH + file.getOriginalFilename());
+            Files.write(path, bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-//	  @GetMapping("/{productId}/image")
-//	    public ResponseEntity<byte[]> getImagesForProduct(@PathVariable Long productId) {
-//	        Images image =  imageService.getImagesForProduct(productId);
-//	        try {
-//				Path path = Paths.get(Constants.PATH + image.getName());
-//				byte[] data = Files.readAllBytes(path);
-//				return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getType())).body(data);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//				return ResponseEntity.notFound().build();
-//			}
-//	    }
-	/*
-	 * @GetMapping("/{productId}/image") public ResponseEntity<ArrayList<Byte>>
-	 * getImagesForProduct(@PathVariable Long productId) throws IOException {
-	 * List<Images> images = imageService.getImagesForProduct(productId);
-	 * //ArrayList<Byte> bytess = new ArrayList<Byte>();
-	 * //ArrayList<HttpHeaders>headerss=new ArrayList<HttpHeaders>();
-	 * 
-	 * List<Pair<Byte, HttpHeaders>> byteHeaders = new ArrayList<>();
-	 * 
-	 * if (images.isEmpty()) { return ResponseEntity.notFound().build(); }
-	 * 
-	 * for (Images images2 : images) {
-	 * System.err.println("namesss."+images2.getName());
-	 * names.add(images2.getName()); }
-	 * 
-	 * //
-	 * 
-	 * // Images image = images.get(0); for (Images images2 : images) {
-	 * System.err.println("insidee."+images2.getName()); File file = new
-	 * File(Constants.PATH + images2.getName()); HttpHeaders headers = new
-	 * HttpHeaders();
-	 * headers.setContentType(MediaType.parseMediaType(images2.getType()));
-	 * headers.setContentLength(file.length());
-	 * headers.setContentDispositionFormData("attachment", file.getName());
-	 * FileInputStream fileInputStream = new FileInputStream(file); //
-	 * headerss.add(headers); byte[] data = new byte[(int)file.length()]; for (Byte
-	 * byte1 : data) { byteHeaders.add(byte1,headers); } fileInputStream.read(data);
-	 * fileInputStream.close(); } return new ResponseEntity<ArrayList<Byte>>(bytess,
-	 * HttpStatus.OK); // System.err.println(file.getName()+"nnnnnnnnnnnnnnnnn");
-	 * 
-	 * 
-	 * 
-	 * 
-	 * return null;
-	 * 
-	 * 
-	 * //return null;
-	 * 
-	 * }
-	 */
-	
+        Images updatedImage = imageRepository.save(image);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedImage);
+    }
 
-	@GetMapping("/{id}/image")
+
+    @GetMapping("/{id}/image")
     public ResponseEntity<List<byte[]>> getProductImages(@PathVariable Long id) {
         Optional<Product> optionalProduct = prodRepo.findById(id);
         if (optionalProduct.isPresent()) {
             List<Images> images = optionalProduct.get().getImages();
             List<byte[]> imageBytes = new ArrayList<>();
             for (Images image : images) {
-            	imageBytes.add(image.getImage());
-            	
+                imageBytes.add(image.getImage());
+
             }
             return ResponseEntity.ok().body(imageBytes);
         } else {

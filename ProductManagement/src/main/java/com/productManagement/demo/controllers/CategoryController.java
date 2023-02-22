@@ -23,45 +23,45 @@ import com.productManagement.demo.service.CategoryService;
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
-	@Autowired
-	private CategoryService categoryService;
+    @Autowired
+    private CategoryService categoryService;
 
-	@GetMapping("/getcategories")
-	public ResponseEntity<?> categories() {
-		List<Category> categories = categoryService.getAllCategory();
-		return ResponseEntity.status(HttpStatus.OK).body(categories);
-	}
+    @GetMapping("/getCategories")
+    public ResponseEntity<?> categories() {
+        List<Category> categories = categoryService.getAllCategory();
+        return ResponseEntity.status(HttpStatus.OK).body(categories);
+    }
 
-	@PostMapping("/addupdateCategory")
-	public ResponseEntity<?> updateUser(@RequestBody Category category, HttpServletRequest request,
-			HttpServletResponse response) {
-		if (category != null && category.getId() != null) {
-			Category categoryEntity = categoryService.getCategoryById(category.getId());
-			categoryEntity.setId(category.getId());
-			categoryEntity.setCategoryName(category.getCategoryName());
-			categoryEntity.setDescription(category.getDescription());
-			categoryEntity.setActive(category.isActive());
+    @PostMapping("/addUpdateCategory")
+    public ResponseEntity<?> updateUser(@RequestBody Category category, HttpServletRequest request,
+                                        HttpServletResponse response) {
+        if (category != null && category.getId() != null) {
+            Category categoryEntity = categoryService.getCategoryById(category.getId());
+            categoryEntity.setId(category.getId());
+            categoryEntity.setCategoryName(category.getCategoryName());
+            categoryEntity.setDescription(category.getDescription());
+            categoryEntity.setActive(category.isActive());
 
-			Category result = categoryService.saveCategory(categoryEntity);
-			return ResponseEntity.status(HttpStatus.OK).body(result);
-		} else if (category != null && category.getId() == null) {
-			Category categoryEntity = new Category();
-			categoryEntity.setCategoryName(category.getCategoryName());
-			categoryEntity.setDescription(category.getDescription());
-			categoryEntity.setActive(category.isActive());
+            Category result = categoryService.saveCategory(categoryEntity);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else if (category != null && category.getId() == null) {
+            Category categoryEntity = new Category();
+            categoryEntity.setCategoryName(category.getCategoryName());
+            categoryEntity.setDescription(category.getDescription());
+            categoryEntity.setActive(category.isActive());
 
-			Category newUser = categoryService.saveCategory(categoryEntity);
+            Category newUser = categoryService.saveCategory(categoryEntity);
 
-			return ResponseEntity.status(HttpStatus.OK).body(newUser);
+            return ResponseEntity.status(HttpStatus.OK).body(newUser);
 
-		} else {
-			return ResponseEntity.badRequest().body("User Details Are missing");
-		}
-	}
+        } else {
+            return ResponseEntity.badRequest().body("User Details Are missing");
+        }
+    }
 
-	@DeleteMapping("deleteCategory/{id}")
-	public ResponseEntity<?> deleteById(@PathVariable Long id) {
-		categoryService.deleteCategoryById(id);
-		return ResponseEntity.ok().build();
-	}
+    @DeleteMapping("deleteCategory/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        categoryService.deleteCategoryById(id);
+        return ResponseEntity.ok().build();
+    }
 }

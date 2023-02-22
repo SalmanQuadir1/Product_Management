@@ -73,4 +73,21 @@ public class UserServiceImpl implements  UserService {
 		return userRepoitory.findDistinctByEmail(email);
 	}
 
+
+	@Override
+	public User findByLogin(String issuer) {
+		// TODO Auto-generated method stub
+		return userRepoitory.findByLogin(issuer);
+	}
+
+
+	@Override
+	public User authenticate(User credentialsDto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	
+
 }
