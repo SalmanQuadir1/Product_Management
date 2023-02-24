@@ -24,7 +24,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     String[] permitted={"/api/**","/product/**"};
         http
-
                 .cors()
                 .and()
                 .csrf()
