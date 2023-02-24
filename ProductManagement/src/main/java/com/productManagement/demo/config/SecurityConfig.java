@@ -24,6 +24,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     String[] permitted={"/api/**","/product/**"};
         http
+
+                .cors()
+                .and()
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
@@ -42,6 +45,7 @@ public class SecurityConfig {
                 .addLogoutHandler(logoutHandler)
                 .logoutSuccessHandler(((request, response, authentication) ->
                         SecurityContextHolder.clearContext()));
+
 
         return http.build();
     }
