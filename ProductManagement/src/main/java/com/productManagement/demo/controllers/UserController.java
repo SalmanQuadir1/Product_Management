@@ -30,7 +30,7 @@ public class UserController {
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User user, HttpServletRequest request,
                                         HttpServletResponse response) {
-        if (user != null && user.getId() != null) {
+    	if (user != null && user.getId() != null) {
             User userEntity = userService.getUserById(user.getId());
             userEntity.setId(user.getId());
             userEntity.setFirstName(user.getFirstName());
