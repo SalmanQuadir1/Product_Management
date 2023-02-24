@@ -24,7 +24,7 @@ public class UserServiceImpl implements  UserService {
 
 
 	@Override
-	public Optional<User> findById(Long id) {
+	public Optional<User> findById(Integer id) {
 		
 		return userRepoitory.findById(id);
 	}
@@ -54,7 +54,7 @@ public class UserServiceImpl implements  UserService {
 
 
 	@Override
-	public User getUserById(Long id) {
+	public User getUserById(Integer id) {
 		// TODO Auto-generated method stub
 		return userRepoitory.findById(id).get();
 	}

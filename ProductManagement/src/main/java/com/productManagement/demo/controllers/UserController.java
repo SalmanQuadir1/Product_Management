@@ -45,7 +45,7 @@ public class UserController {
             userEntity.setPincode(user.getPincode());
             userEntity.setPopularSearches(user.getPopularSearches());
             userEntity.setRecentSearches(user.getRecentSearches());
-            userEntity.setRoles(user.getRoles());
+           // userEntity.setRoles(user.getRoles());
             userEntity.setProduct(user.getProduct());
 
             User result = userService.saveProduct(userEntity);
@@ -64,7 +64,7 @@ public class UserController {
             userEntity.setPincode(user.getPincode());
             userEntity.setPopularSearches(user.getPopularSearches());
             userEntity.setRecentSearches(user.getRecentSearches());
-            userEntity.setRoles(user.getRoles());
+           // userEntity.setRoles(user.getRoles());
             userEntity.setProduct(user.getProduct());
             User newUser = userService.saveProduct(userEntity);
 
@@ -89,7 +89,7 @@ public class UserController {
     }
 
     @GetMapping("/findUser/{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getById(@PathVariable("id") Integer id) {
         Optional<User> user = userService.findById(id);
         return ResponseEntity.ok(user);
     }

@@ -1,29 +1,31 @@
 package com.productManagement.demo.entity;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.productManagement.demo.token.Token;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name="user")
-public class User {
+public class User implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private Integer id;
 	@Column(name = "first_name")
 	private String firstName;
 
@@ -67,187 +69,53 @@ public class User {
 	private String userImage;
 	
 	private String login;
-	
-	private String token;
 
-	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<Role> roles = new ArrayList<>();
+	@OneToMany(mappedBy = "user")
+	private List<Token> tokens;
+
+	@Enumerated(EnumType.STRING)
+	private Role role;
+//	@ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.EAGER)
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	private List<Role> roles = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Product> product;
 
-	public User() {
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
+	@Override
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	@Override
+	public String getUsername() {
+		return email;
 	}
 
-	public String getPhone() {
-		return phone;
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
 	}
 
-	public String getAddress() {
-		return address;
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
-
-	public Integer getPincode() {
-		return pincode;
-	}
-
-	public void setPincode(Integer pincode) {
-		this.pincode = pincode;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getRecentSearches() {
-		return recentSearches;
-	}
-
-	public void setRecentSearches(String recentSearches) {
-		this.recentSearches = recentSearches;
-	}
-
-	public String getPopularSearches() {
-		return popularSearches;
-	}
-
-	public void setPopularSearches(String popularSearches) {
-		this.popularSearches = popularSearches;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
-
-	public String getUserImage() {
-		return userImage;
-	}
-
-	public void setUserImage(String userImage) {
-		this.userImage = userImage;
-	}
-	
-	
-	
-
-	public String getLogin() {
-		return login;
-	}
-
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public List<Product> getProduct() {
-		return product;
-	}
-
-	public void setProduct(List<Product> product) {
-		this.product = product;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public User(String username, String password, String token) {
-		this.username = username;
-		this.password = password;
-		this.token = token;
-	}
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
-		
-	}
-
-	
-	
-
 }

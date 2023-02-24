@@ -12,7 +12,7 @@ public interface UserService {
 	List<User> findAll();
 
 
-	Optional<User> findById(Long id);
+	Optional<User> findById(Integer id);
 
 
 	List<User> findDistinctByPhone(String phone);
@@ -24,7 +24,7 @@ public interface UserService {
 	User save(User user);
 
 
-	User getUserById(Long id);
+	User getUserById(Integer id);
 
 
 	User saveProduct(User user);
