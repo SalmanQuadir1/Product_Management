@@ -22,7 +22,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    String[] permitted={"/api/**","/product/**","/images/**"};
+    String[] permitted={"/api/**","/product/allProducts/**","/product/findProduct/{id}/**","/images/**"};
         http
                 .cors()
                 .and()
