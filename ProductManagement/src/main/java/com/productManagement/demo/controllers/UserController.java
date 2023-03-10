@@ -1,24 +1,27 @@
 package com.productManagement.demo.controllers;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.productManagement.demo.entity.*;
+import com.productManagement.demo.repository.CartRepository;
+import com.productManagement.demo.repository.ProductRepository;
+import com.productManagement.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
-import com.productManagement.demo.entity.Order;
-import com.productManagement.demo.entity.Product;
-import com.productManagement.demo.entity.User;
 import com.productManagement.demo.service.UserService;
 
 @RestController
@@ -26,6 +29,15 @@ import com.productManagement.demo.service.UserService;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    CartRepository cartRepository;
+    @Autowired
+    ProductRepository productRepository;
+
+
+
 
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User user, HttpServletRequest request,
@@ -122,4 +134,25 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
+
+    @PostMapping("/updatePassword")
+    public ResponseEntity<?> updatePassword(@RequestParam String email, @RequestParam String currentPassword, @RequestParam String newPassword) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            return ResponseEntity.badRequest().body("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Password updated successfully");
+    }
+
 }
+
+

@@ -1,5 +1,6 @@
 package com.productManagement.demo.token;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.productManagement.demo.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

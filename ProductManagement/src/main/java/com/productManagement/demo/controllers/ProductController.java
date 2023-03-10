@@ -7,55 +7,85 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.productManagement.demo.entity.Rating;
+import com.productManagement.demo.repository.ProductRepository;
+import com.productManagement.demo.repository.RatingRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.zxing.WriterException;
 import com.productManagement.demo.entity.Images;
 import com.productManagement.demo.entity.Product;
 import com.productManagement.demo.entity.ProductVariant;
 import com.productManagement.demo.repository.ProductVariantRepository;
 import com.productManagement.demo.service.ImageService;
 import com.productManagement.demo.service.ProductService;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import utils.CommonMethods;
 import utils.Constants;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/product")
 public class ProductController {
+    private final Map<Long, Product> products = new HashMap<>();
 
     @Autowired
     ProductService prodService;
-
+    private final Cloudinary cloudinary;
     //private Object productImage;
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private  JdbcTemplate jdbcTemplate;
+    @Autowired
+    private RatingRepository ratingRepository;
+      @Autowired
+      private ProductRepository productRepository;
 
     @Autowired
     private ProductVariantRepository pvr;
 
+
+    public ProductController() {
+        cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dojrrndhg",
+                "api_key", "675755533839187",
+                "api_secret", "C9eoBa_6_Mrmtwfe7pDZQRfzNZc"));
+    }
+
+    @PostMapping("/uploadImage")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("imageFile") MultipartFile imageFile,
+                                                           @RequestParam("public_id") String publicId,
+                                                           @RequestParam("folder") String folder) {
+
+        try {
+            Map<String, Object> params = ObjectUtils.asMap(
+                    "public_id", publicId,
+                    "folder", folder);
+            Map<String, String> result = cloudinary.uploader().upload(imageFile.getBytes(), params);
+
+            return ResponseEntity.ok()
+                    .body(result);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest()
+                    .body(Collections.singletonMap("error", "Error uploading image"));
+        }
+    }
 
     @PostMapping(value = "/updateProduct", consumes = {"multipart/form-data",
             MediaType.MULTIPART_FORM_DATA_VALUE}) /*
@@ -81,6 +111,8 @@ public class ProductController {
             productEntity.setRating(product.getRating());
             productEntity.setReviews(product.getReviews());
             productEntity.setStatus(product.getStatus());
+            productEntity.setColor(product.getColor());
+            productEntity.setCount(product.getCount());
             productEntity.setProductName(product.getProductName());
             Product result = prodService.saveProduct(productEntity);
 
@@ -115,6 +147,9 @@ public class ProductController {
             productEntity.setReviews(product.getReviews());
             productEntity.setStatus(product.getStatus());
             productEntity.setProductName(product.getProductName());
+            productEntity.setColor(product.getColor());
+            productEntity.setCount(product.getCount());
+            productEntity.setCreatedAt(new Date());
             Product newProduct = prodService.saveProduct(productEntity);
             System.err.println(product.getDescription() + "aaaaaaaaaaaaaaaaaaaaa");
             for (MultipartFile file : files) {
@@ -188,32 +223,6 @@ public class ProductController {
             return "image/jpeg";
     }
 
-//	@RequestMapping(value = "/getimage/{imageName:.+}", method = RequestMethod.GET)
-//   // @ApiOperation(value = "Find Image ")
-//   // @ApiResponses(value = { @ApiResponse(code = 200, message = "Success") })
-//    public static void getImage(@PathVariable("imageName") String imageName, Images model, HttpServletRequest req,
-//        List<HttpServletResponse> rep) throws IOException, WriterException {
-//
-//      try {
-//        InputStream is = new FileInputStream(Constants.PATH + imageName);
-//
-//        byte[] bytes = IOUtils.toByteArray(is);
-//        for (HttpServletResponse ree : rep) {
-//          ree.setContentType(CommonMethods.getContentType(imageName));
-//          OutputStream os = ree.getOutputStream();
-//          os.write(bytes);
-//          os.close();
-//          is.close();
-//        }
-//        //rep.setContentType(CommonsMethod.getContentType(imageName));
-//        
-//        
-//        
-//      } catch (Exception e) {
-//      }
-//
-//    }
-
     @GetMapping("/allProducts")
     public ResponseEntity<?> getAll() {
         List<Product> product = prodService.findAll();
@@ -239,21 +248,112 @@ public class ProductController {
 
     /*--------------------------------------------------------------------------*/
 
-    /*
-     * @GetMapping("/{id}/sizes") public ResponseEntity<Map<String, Integer>>
-     * getSizesAndQuantitiesByProductId(@PathVariable Long id) { List<Object[]>
-     * sizesAndQuantities = pvr.findSizesAndQuantitiesByProductId(id);
-     *
-     * Map<String, Integer> sizeQuantityMap = sizesAndQuantities.stream()
-     * .collect(Collectors.toMap(sizeAndQuantity -> (String) sizeAndQuantity[0],
-     * sizeAndQuantity -> ((Number) sizeAndQuantity[1]).intValue()));
-     *
-     * Map<String, Integer> filteredSizeQuantityMap = new HashMap<>();
-     * filteredSizeQuantityMap.put("S", sizeQuantityMap.getOrDefault("S", 0));
-     * filteredSizeQuantityMap.put("XXL", sizeQuantityMap.getOrDefault("XXL", 0));
-     *
-     * return ResponseEntity.ok(filteredSizeQuantityMap); }
-     */
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getAllProducts(@RequestParam Map<String, String> params) {
+        try {
+            // Filtering
+            Map<String, String> queryObj = new HashMap<>(params);
+            String[] excludeFields = {"page", "sort", "limit", "fields", "price","color"};
+            Arrays.stream(excludeFields).forEach(el -> queryObj.remove(el));
+            String queryStr = "";
+            if (params.containsKey("price")) {
+                String priceParam = params.get("price");
+                System.out.println("priceeeeee------------"+priceParam);
+                String[] priceValues = priceParam.split(",");
+                for (int i = 0; i < priceValues.length; i++) {
+                    String[] priceArr = priceValues[i].split(":");
+                    if (priceArr.length == 2) {
+                        String operator = priceArr[0];
+                        String value = priceArr[1];
+                        System.out.println("operatorrrr"+operator);
+                        switch (operator) {
+                            case "gte":
+                                queryStr += "price >= " + value;
+                                break;
+                            case "gt":
+                                queryStr += "price > " + value;
+                                break;
+                            case "lte":
+                                queryStr += "price <= " + value;
+                                break;
+                            case "lt":
+                                queryStr += "price < " + value;
+                                break;
+                        }
+                        if (i < priceValues.length - 1) {
+                            queryStr += " AND ";
+                        }
+                    }
+                }
+            }
+
+            // Add filtering by color
+            if (params.containsKey("color")) {
+                String color = params.get("color");
+                if (!queryStr.isEmpty()) {
+                    queryStr += " AND ";
+                }
+                queryStr += "color = '" + color + "'";
+            }
+            // Sorting
+            String sortBy = params.getOrDefault("sort", "-created_at");
+            String[] sortByFields = sortBy.split(",");
+            String orderBy = Arrays.stream(sortByFields)
+                    .map(field -> field.startsWith("-") ? field.substring(1) + " DESC" : field + " ASC")
+                    .collect(Collectors.joining(", "));
+
+            // Limiting the fields
+            String fields = params.getOrDefault("fields", "*");
+
+            // Pagination
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int limit = Integer.parseInt(params.getOrDefault("limit", "10"));
+            int offset = (page - 1) * limit;
+
+            String query = "SELECT " + fields + " FROM Product";
+            if (!queryStr.isEmpty()) {
+                query += " WHERE " + queryStr;
+            }
+            query += " ORDER BY " + orderBy + " LIMIT " + limit + " OFFSET " + offset;
+
+            List<Product> products = jdbcTemplate.query(query, new BeanPropertyRowMapper<>(Product.class));
+
+            // Get the count of all products for pagination
+            int productCount = 0;
+            if (!queryStr.isEmpty()) {
+                productCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM Product WHERE " + queryStr, Integer.class);
+            } else {
+                productCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM Product", Integer.class);
+            }
+
+            if (offset >= productCount) {
+                throw new RuntimeException("This Page does not exists");
+            }
+
+            return ResponseEntity.ok()
+                    .header("X-Total-Count", String.valueOf(productCount))
+                    .body(products);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @PostMapping("/{id}/ratings")
+    public ResponseEntity<Rating> addRatingToProduct(@PathVariable Long id, @RequestBody Rating rating) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (!optionalProduct.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Product product = optionalProduct.get();
+        rating.setProduct(product);
+     Rating rtng =   ratingRepository.save(rating);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(rtng);
+    }
+
+
 
 
 }

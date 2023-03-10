@@ -1,6 +1,8 @@
 package com.productManagement.demo.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -15,10 +17,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
+@Data
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name="product")
 public class Product {
 
@@ -34,6 +41,7 @@ public class Product {
 	
 	@Column(name="price")
 	private Double price;
+
 	
 	@Column(name="status")
 	private String status;
@@ -49,6 +57,18 @@ public class Product {
 	
 	@Column(name="details")
 	private String details;
+
+	private Date createdAt;
+	private int quantity;
+	private String brand;
+	private String color;
+	private int sold;
+	private int totalRatings;
+	private Integer count;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	private List<Rating> ratings ;
 	
 	
 	@ManyToOne
@@ -128,16 +148,6 @@ public class Product {
 	}
 
 
-
-	public Double getPrice() {
-		return price;
-	}
-
-
-
-	public void setPrice(Double price) {
-		this.price = price;
-	}
 
 
 
@@ -235,6 +245,21 @@ public class Product {
 		this.variants = variants;
 	}
 
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public List<Rating> getRatings() {
+		return ratings;
+	}
+
+	public void setRatings(List<Rating> ratings) {
+		this.ratings = ratings;
+	}
 
 	@Override
 	public String toString() {

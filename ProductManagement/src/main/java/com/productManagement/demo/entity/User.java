@@ -15,7 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,8 +44,7 @@ public class User implements UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
-	
-	
+
 	@Column(name = "first_name")
 	private String firstName;
 
@@ -98,10 +99,15 @@ public class User implements UserDetails {
 //	@LazyCollection(LazyCollectionOption.FALSE)
 //	private List<Role> roles = new ArrayList<>();
 
+
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Product> product;
 
+
+	@OneToMany(mappedBy = "user")
+	private List<Cart> carts;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
