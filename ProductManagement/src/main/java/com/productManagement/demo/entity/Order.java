@@ -72,23 +72,16 @@ public class Order {
     private Float finalAmount;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+     @ManyToOne(fetch = FetchType.LAZY)
      @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	  private User user;
 
 
     @ManyToMany
     private List<Product> product;
 
-
-
-
     @OneToOne
     private PaymentIntent paymentIntent;
-    
-
-    
-    
 
 }

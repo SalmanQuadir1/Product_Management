@@ -6,5 +6,5 @@ import lombok.Data;
 public class CartItemDto {
     private Long productId;
     private Integer count;
-    private String color;
+   // private String color;
 }

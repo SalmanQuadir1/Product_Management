@@ -45,7 +45,6 @@ public class ProductController {
 
     @Autowired
     ProductService prodService;
-    private final Cloudinary cloudinary;
     //private Object productImage;
     @Autowired
     private ImageService imageService;
@@ -60,32 +59,6 @@ public class ProductController {
     @Autowired
     private ProductVariantRepository pvr;
 
-
-    public ProductController() {
-        cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dojrrndhg",
-                "api_key", "675755533839187",
-                "api_secret", "C9eoBa_6_Mrmtwfe7pDZQRfzNZc"));
-    }
-
-    @PostMapping("/uploadImage")
-    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("imageFile") MultipartFile imageFile,
-                                                           @RequestParam("public_id") String publicId,
-                                                           @RequestParam("folder") String folder) {
-
-        try {
-            Map<String, Object> params = ObjectUtils.asMap(
-                    "public_id", publicId,
-                    "folder", folder);
-            Map<String, String> result = cloudinary.uploader().upload(imageFile.getBytes(), params);
-
-            return ResponseEntity.ok()
-                    .body(result);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest()
-                    .body(Collections.singletonMap("error", "Error uploading image"));
-        }
-    }
 
     @PostMapping(value = "/updateProduct", consumes = {"multipart/form-data",
             MediaType.MULTIPART_FORM_DATA_VALUE}) /*

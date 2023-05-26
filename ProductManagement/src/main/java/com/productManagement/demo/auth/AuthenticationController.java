@@ -1,7 +1,9 @@
 package com.productManagement.demo.auth;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.core.Authentication;
@@ -13,11 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthenticationController {
-    private final AuthenticationService service;
+	@Autowired
+    private  AuthenticationService service;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){

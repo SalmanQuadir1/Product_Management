@@ -51,7 +51,7 @@ public class CartServiceImpl implements CartService {
             CartItem cartItem = new CartItem();
             cartItem.setProduct(product);
             cartItem.setCount(item.getCount());
-            cartItem.setColor(item.getColor());
+            //cartItem.setColor(item.getColor());
             cartItem.setCart(cart);
             items.add(cartItem);
             cartItemRepository.save(cartItem);
