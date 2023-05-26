@@ -18,14 +18,19 @@ public class CartController {
 
     @Autowired
     CartService cartService;
+    
     @Autowired
     UserRepository userRepository;
+    
     @Autowired
     private CartRepository cartRepository;
+    
     @Autowired
     private ProductRepository productRepository;
+    
     @Autowired
     CouponRepository couponRepository;
+    
     @Autowired
     CouponRequestRepository couponRequestRepository;
 
